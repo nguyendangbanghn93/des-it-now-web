@@ -1,13 +1,14 @@
 import { Route, Routes } from "react-router-dom";
-import Register from "@/components/Register";
-import Login from "@/components/Login";
 import Dashboard from "@/pages/Dashboard";
 import Layout from "@/components/Layout";
 import Requests from "@/pages/Requests";
+import AuthPage from "@/pages/Auth";
 
 function App() {
   return (
     <Routes>
+      <Route path="/auth/*" element={<AuthPage />} />
+
       <Route
         path="*"
         element={
@@ -19,11 +20,7 @@ function App() {
             </Routes>
           </Layout>
         }
-      >
-        {/* <Layout><></></Layout> */}
-      </Route>
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
+      />
     </Routes>
   );
 }
