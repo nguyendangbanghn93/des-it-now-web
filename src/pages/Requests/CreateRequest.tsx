@@ -1,5 +1,7 @@
 import requestApi from "@/api/request";
+import uploadApi from "@/api/upload";
 import BaseUpload from "@/components/bases/BaseUpload";
+import { toasts } from "@/components/commons/Toast";
 import { useConfigStore } from "@/contexts/ConfigProvider";
 import {
   Card,
@@ -14,6 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
+import _ from "lodash";
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 
@@ -27,13 +30,12 @@ interface IFormInput {
   designType?: string;
   sampleQuantity: number;
   totalPrice: number;
-  images: FileList | null;
   note: string;
-  photos: IFileData;
+  photos: Array<IFileData | File>;
 }
 
 export default function CreateRequest({
-  open = true,
+  open = false,
   handleClose,
 }: ICreateRequestProps) {
   const {
@@ -43,18 +45,25 @@ export default function CreateRequest({
     formState: { errors },
     watch,
     setValue,
+    reset,
   } = useForm<IFormInput>({
     defaultValues: {
       productType: "",
       designType: "",
       sampleQuantity: 1,
       totalPrice: 0,
-      images: null,
       note: "",
     },
   });
 
-  const { mutate } = useMutation({ mutationFn: requestApi.create });
+  const { mutate } = useMutation({
+    mutationFn: requestApi.create,
+    onSuccess() {
+      reset();
+      toasts.success("Tạo yêu cầu thành công");
+      handleClose && handleClose();
+    },
+  });
 
   const [productTypes, prices] = useConfigStore((s) => [
     s.listProductType,
@@ -67,7 +76,8 @@ export default function CreateRequest({
 
   useEffect(() => {
     setValue("designType", undefined);
-  }, [productType, setValue]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productType]);
 
   useEffect(() => {
     if (productType && designType && sampleQuantity) {
@@ -78,6 +88,8 @@ export default function CreateRequest({
       );
 
       setValue("totalPrice", Number(price?.price) * sampleQuantity || 0);
+    } else {
+      setValue("totalPrice", 0);
     }
   }, [designType, prices, productType, sampleQuantity, setValue]);
 
@@ -89,7 +101,19 @@ export default function CreateRequest({
     return d;
   }, []);
 
-  const onSubmit = (data: IFormInput) => {
+  const onSubmit = async (data: IFormInput) => {
+    for (let i = 0; i < data?.photos?.length; i++) {
+      const photo = data?.photos[i];
+      if (!_.get(photo, "url")) {
+        try {
+          const file = await uploadApi.uploadFile(photo as File);
+          data.photos[i] = file;
+        } catch (error) {
+          console.log("🚀 ~ onSubmit ~ error:", error);
+          return toasts.error("Upload ảnh thất bại, vui lòng thử lại");
+        }
+      }
+    }
     mutate(data);
   };
 
@@ -145,7 +169,6 @@ export default function CreateRequest({
                       <Select
                         {...field}
                         labelId="design-type-label"
-                        label="Loại thiết kế"
                       >
                         {designTypes?.map((d, i) => (
                           <MenuItem key={i} value={String(d.id)}>
@@ -244,10 +267,10 @@ export default function CreateRequest({
                 Hủy
               </Button>
               <Button
-                sx={{ color: "white" }}
+                sx={{ color: "white", background: "" }}
                 type="submit"
                 variant="contained"
-                color="success"
+                color="secondary"
               >
                 Tạo yêu cầu
               </Button>

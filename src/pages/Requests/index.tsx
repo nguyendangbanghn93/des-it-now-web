@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  Divider,
-  MenuItem,
-  Select,
-  Tab,
-  Tabs,
-} from "@mui/material";
+import { Button, Card, MenuItem, Select, Tab, Tabs } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import BaseTextField from "@/components/bases/BaseTextField";
@@ -24,27 +16,35 @@ export default function Requests(_props: IRequestsProps) {
   const [sort, setShort] = useState("new");
   const [keyword, setKeyword] = useState<string>();
   const { dialog, context } = useDiaLog();
+  const [openCreateRequest, setOpenCreateRequest] = useState(false);
 
   const { data: team } = useQuery({
-    queryFn: teamApi.findMyTeam,
-    queryKey: ["findMyTeam"],
+    queryFn: teamApi.getMyTeam,
+    queryKey: ["getMyTeam"],
   });
 
   const addRequestClick = () => {
-    dialog.confirm({
-      content:
-        "Bạn không thuộc team nào vui lòng liên hệ với người khác để tham gia team hoặc tạo 1 team mới.",
-      okButton: "Tạo team",
-      okHandle(close) {
-        // Tạo team
-        close();
-      },
-    });
+    if (!team) {
+      dialog.confirm({
+        content:
+          "Bạn không thuộc team nào vui lòng liên hệ với người khác để tham gia team hoặc tạo 1 team mới.",
+        okButton: "Tạo team",
+        okHandle(close) {
+          // Tạo team
+          close();
+        },
+      });
+    } else {
+      setOpenCreateRequest(true);
+    }
   };
 
   return (
     <>
-      <CreateRequest />
+      <CreateRequest
+        open={openCreateRequest}
+        handleClose={() => setOpenCreateRequest(false)}
+      />
       {context}
       <div className="container mx-auto mt-20">
         <div className="flex justify-between items-center mb-4">
@@ -53,7 +53,8 @@ export default function Requests(_props: IRequestsProps) {
             onClick={addRequestClick}
             startIcon={<AddIcon />}
             variant="contained"
-            color="error"
+            color="secondary"
+            sx={{ color: "white" }}
           >
             Thêm
           </Button>
@@ -104,10 +105,10 @@ export default function Requests(_props: IRequestsProps) {
             />
 
             <Button
-              className="bg-orange-600"
               startIcon={<FilterList />}
               variant="contained"
               color="secondary"
+              sx={{ color: "white" }}
             >
               Lọc
             </Button>
