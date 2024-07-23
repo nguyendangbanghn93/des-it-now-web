@@ -1,15 +1,21 @@
-import { LOGO_WHITE } from "@/assets";
 import { Avatar, Button } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import CreateIcon from "@mui/icons-material/Create";
+
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import TopicIcon from "@mui/icons-material/Topic";
-import SearchIcon from "@mui/icons-material/Search";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import BaseDropdown from "@/components/bases/BaseDropdown";
+import CreateIcon from "@mui/icons-material/Create";
+import HomeIcon from "@mui/icons-material/Home";
+import { LOGO_WHITE } from "@/assets";
 import { Link } from "react-router-dom";
+import { Logout } from "@mui/icons-material";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import SearchIcon from "@mui/icons-material/Search";
+import TopicIcon from "@mui/icons-material/Topic";
+import useAuthStore from "@/stores/authStore";
+
 export interface ITopBarProps {}
 
 export default function TopBar(_props: ITopBarProps) {
+  const logout = useAuthStore((s) => s.logout);
   return (
     <div className="w-full sticky top-0 left-0 bg-[#121620] flex p-4 items-center justify-between">
       <div className="flex items-center">
@@ -53,12 +59,24 @@ export default function TopBar(_props: ITopBarProps) {
         <Button>
           <NotificationsNoneIcon className="text-white" />
         </Button>
-        <Button>
-          <div className="flex text-white items-center gap-4">
-            Nguyễn Đăng Bằng
-            <Avatar>N</Avatar>
-          </div>
-        </Button>
+        <BaseDropdown
+          items={[
+            {
+              icon: Logout,
+              title: "Đăng xuất",
+              onClick: function (): void {
+                logout();
+              },
+            },
+          ]}
+        >
+          <Button>
+            <div className="flex text-white items-center gap-4">
+              Nguyễn Đăng Bằng
+              <Avatar>N</Avatar>
+            </div>
+          </Button>
+        </BaseDropdown>
       </div>
     </div>
   );

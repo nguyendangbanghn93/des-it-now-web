@@ -1,5 +1,6 @@
-import { alpha } from "@mui/system/colorManipulator";
 import { error, info, neutral, success, warning } from "@/theme/colors";
+
+import { alpha } from "@mui/system/colorManipulator";
 import { getPrimary } from "@/theme/utils";
 
 export const createPalette = (config: any) => {

@@ -1,7 +1,8 @@
+import { Components, createTheme } from "@mui/material/styles";
+
 import { Theme } from "@emotion/react";
 import { inputLabelClasses } from "@mui/material/InputLabel";
 import { tableCellClasses } from "@mui/material/TableCell";
-import { Components, createTheme } from "@mui/material/styles";
 
 // Used only to create transitions
 const muiTheme = createTheme();
@@ -46,7 +47,7 @@ export const createComponents = (): Components<Omit<Theme, "components">> => {
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
+          borderRadius: 8,
         },
       },
     },
@@ -354,7 +355,11 @@ export const createComponents = (): Components<Omit<Theme, "components">> => {
     MuiTextField: {
       defaultProps: {
         size: "medium",
-        // variant: "filled",
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        size: "small",
       },
     },
   };

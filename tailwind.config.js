@@ -6,7 +6,7 @@ export default {
   },
   plugins: [],
   corePlugins: {
-    preflight: false,
+    // preflight: false,
     // container: false,
     // Other core plugins that you want to disable
     

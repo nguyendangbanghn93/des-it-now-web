@@ -1,10 +1,22 @@
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+
 import { LOGO } from "@/assets";
 import Login from "@/components/Login";
 import Register from "@/components/Register";
-import { Route, Routes } from "react-router-dom";
+import useAuthStore from "@/stores/authStore";
+import { useEffect } from "react";
+
 export interface IAuthPageProps {}
 
 export default function AuthPage(_props: IAuthPageProps) {
+  const token = useAuthStore((s) => s.token);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (token) navigate(location?.state?.backRoute || "/");
+  }, [location?.state?.backRoute, navigate, token]);
+
   return (
     <div className="flex min-h-svh">
       <div className="w-7/12 bg-purple-300"></div>

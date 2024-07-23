@@ -1,10 +1,15 @@
-import authApi from "@/api/auth";
-import { LOGO } from "@/assets";
-import BaseTextField from "@/components/BaseTextField";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+import BaseTextField from "@/components/bases/BaseTextField";
 import { Button } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { Link } from "react-router-dom";
+import authApi from "@/api/auth";
+import { loading } from "@/components/commons/Loading";
+import { shallow } from "zustand/shallow";
+import { toasts } from "@/components/commons/Toast";
+import useAuthStore from "@/stores/authStore";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 export interface IRegisterProps {}
 
@@ -15,6 +20,11 @@ type IRegisterFormInputs = {
 };
 
 export default function Register(_props: IRegisterProps) {
+  const [setToken, setUser] = useAuthStore(
+    (s) => [s.setToken, s.setUser],
+    shallow
+  );
+
   const {
     register,
     handleSubmit,
@@ -22,11 +32,21 @@ export default function Register(_props: IRegisterProps) {
     setError,
   } = useForm<IRegisterFormInputs>();
 
-  const { mutate } = useMutation({
+  const { data, mutate, isPending } = useMutation({
     mutationFn: authApi.register,
-    mutationKey: ["register"],
   });
-  console.log(errors);
+
+  useEffect(() => {
+    if (data) {
+      toasts.success("Đăng ký thành công");
+      setUser(data.user);
+      setToken(data.jwt);
+    }
+  }, [data, setToken, setUser]);
+
+  useEffect(() => {
+    loading(isPending);
+  }, [isPending]);
 
   const onSubmit: SubmitHandler<IRegisterFormInputs> = ({
     username,

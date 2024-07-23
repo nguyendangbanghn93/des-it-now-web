@@ -1,7 +1,15 @@
-import BaseTextField from "@/components/BaseTextField";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+import BaseTextField from "@/components/bases/BaseTextField";
 import { Button } from "@mui/material";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { Link } from "react-router-dom";
+import authApi from "@/api/auth";
+import { loading } from "@/components/commons/Loading";
+import { shallow } from "zustand/shallow";
+import { toasts } from "@/components/commons/Toast";
+import useAuthStore from "@/stores/authStore";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 export interface ILoginProps {}
 
@@ -11,15 +19,34 @@ type ILoginFormInputs = {
 };
 
 export default function Login(_props: ILoginProps) {
+  const [setToken, setUser] = useAuthStore(
+    (s) => [s.setToken, s.setUser],
+    shallow
+  );
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginFormInputs>();
 
-  const onSubmit: SubmitHandler<ILoginFormInputs> = (data: any) => {
-    console.log(data);
-  };
+  const { data, mutate, isPending } = useMutation({
+    mutationFn: authApi.login,
+  });
+
+  useEffect(() => {
+    if (data) {
+      toasts.success("Đăng ký thành công");
+      setUser(data?.user);
+      setToken(data?.jwt);
+    }
+  }, [data, setToken, setUser]);
+
+  useEffect(() => {
+    loading(isPending);
+  }, [isPending]);
+
+  const onSubmit: SubmitHandler<ILoginFormInputs> = (data: any) => mutate(data);
 
   return (
     <>
@@ -49,6 +76,7 @@ export default function Login(_props: ILoginProps) {
         />
         <BaseTextField
           id="password"
+          type="password"
           label="Password"
           required
           autoFocus
@@ -61,7 +89,12 @@ export default function Login(_props: ILoginProps) {
           Đăng nhập
         </Button>
 
-        <div className="text-orange-500">Quên mật khẩu</div>
+        <Link
+          to={"https://zalo.me/2388737910481254550"}
+          className="text-orange-500"
+        >
+          Quên mật khẩu
+        </Link>
       </form>
     </>
   );

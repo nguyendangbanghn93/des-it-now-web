@@ -6,13 +6,13 @@ export interface IAuthParams {
 }
 
 const authApi = {
-  async register(data: IAuthParams) {
+  async register(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
     const res = await http.post("/api/auth/register", data);
-    return res;
+    return res.data;
   },
-  async login(data: IAuthParams) {
+  async login(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
     const res = await http.post("/api/auth/login", data);
-    return res;
+    return res.data;
   },
 };
 
