@@ -9,9 +9,9 @@ export default function Loading(_props: ILoadingProps) {
   return (
     <Backdrop
       sx={{
-        color: "#fff",
-        background: "#dddddd",
-        zIndex: (theme) => theme.zIndex.drawer + 1,
+        color: "rgb(255, 102, 42)",
+        background: "rgba(255, 255, 255, 0.41)",
+        zIndex: 9999,
       }}
       open={loading}
     >

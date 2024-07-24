@@ -1,6 +1,7 @@
-import requestApi from "@/api/request";
+import requestApi, { IRequestForm } from "@/api/request";
 import uploadApi from "@/api/upload";
 import BaseUpload from "@/components/bases/BaseUpload";
+import { loading } from "@/components/commons/Loading";
 import { toasts } from "@/components/commons/Toast";
 import { useConfigStore } from "@/contexts/ConfigProvider";
 import {
@@ -23,18 +24,11 @@ import { useForm, Controller } from "react-hook-form";
 export interface ICreateRequestProps {
   open?: boolean;
   handleClose?: () => void;
-}
-
-interface IFormInput {
-  productType?: string;
-  designType?: string;
-  sampleQuantity: number;
-  totalPrice: number;
-  note: string;
-  photos: Array<IFileData | File>;
+  refetchRequest: () => void;
 }
 
 export default function CreateRequest({
+  refetchRequest,
   open = false,
   handleClose,
 }: ICreateRequestProps) {
@@ -46,7 +40,7 @@ export default function CreateRequest({
     watch,
     setValue,
     reset,
-  } = useForm<IFormInput>({
+  } = useForm<IRequestForm>({
     defaultValues: {
       productType: "",
       designType: "",
@@ -56,14 +50,18 @@ export default function CreateRequest({
     },
   });
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: requestApi.create,
     onSuccess() {
-      reset();
       toasts.success("Tạo yêu cầu thành công");
+      refetchRequest();
       handleClose && handleClose();
     },
   });
+
+  useEffect(() => {
+    loading(isPending);
+  }, [isPending]);
 
   const [productTypes, prices] = useConfigStore((s) => [
     s.listProductType,
@@ -76,7 +74,7 @@ export default function CreateRequest({
 
   useEffect(() => {
     setValue("designType", undefined);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productType]);
 
   useEffect(() => {
@@ -101,7 +99,7 @@ export default function CreateRequest({
     return d;
   }, []);
 
-  const onSubmit = async (data: IFormInput) => {
+  const onSubmit = async (data: IRequestForm) => {
     for (let i = 0; i < data?.photos?.length; i++) {
       const photo = data?.photos[i];
       if (!_.get(photo, "url")) {
@@ -114,14 +112,17 @@ export default function CreateRequest({
         }
       }
     }
-    mutate(data);
+    mutate(data as IRequestForm);
   };
 
   return (
     <Modal
       className="flex justify-center items-center"
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        reset();
+        handleClose?.();
+      }}
     >
       <Card className="bg-white w-[800px] p-8">
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -166,10 +167,7 @@ export default function CreateRequest({
                     control={control}
                     rules={{ required: "Trường này là bắt buộc" }}
                     render={({ field }) => (
-                      <Select
-                        {...field}
-                        labelId="design-type-label"
-                      >
+                      <Select {...field} labelId="design-type-label">
                         {designTypes?.map((d, i) => (
                           <MenuItem key={i} value={String(d.id)}>
                             {d.name}

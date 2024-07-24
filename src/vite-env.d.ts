@@ -111,3 +111,30 @@ interface ISizeImage {
   height: number;
   sizeInBytes: number;
 }
+
+interface IPagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
+interface IRequest {
+  id: number;
+  name?: any;
+  status: string;
+  designType: string;
+  productType: string;
+  totalPrice: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  team: ITeam;
+}
+interface ITeam {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}

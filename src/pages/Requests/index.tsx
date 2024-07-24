@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import teamApi from "@/api/team";
 import useDiaLog from "@/hooks/useDialog";
 import CreateRequest from "@/pages/Requests/CreateRequest";
+import requestApi from "@/api/request";
+import RequestTable from "@/pages/Requests/RequestTable";
 
 export interface IRequestsProps {}
 
@@ -22,6 +24,13 @@ export default function Requests(_props: IRequestsProps) {
     queryFn: teamApi.getMyTeam,
     queryKey: ["getMyTeam"],
   });
+
+  const { data: dataRequests, refetch: refetchRequest } = useQuery({
+    queryFn: requestApi.find,
+    queryKey: ["requestApi.find"],
+  });
+
+  console.log("🚀 ~ Requests ~ dataRequests:", dataRequests);
 
   const addRequestClick = () => {
     if (!team) {
@@ -42,6 +51,7 @@ export default function Requests(_props: IRequestsProps) {
   return (
     <>
       <CreateRequest
+        refetchRequest={refetchRequest}
         open={openCreateRequest}
         handleClose={() => setOpenCreateRequest(false)}
       />
@@ -112,6 +122,12 @@ export default function Requests(_props: IRequestsProps) {
             >
               Lọc
             </Button>
+          </div>
+          <div className="mt-4">
+            <RequestTable
+              data={dataRequests?.data || []}
+              pagination={dataRequests?.meta?.pagination}
+            />
           </div>
         </Card>
       </div>
