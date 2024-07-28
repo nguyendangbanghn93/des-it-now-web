@@ -8,7 +8,12 @@ export default function Dashboard(_props: IDashboardProps) {
     <div className="container mx-auto mt-20">
       <div className="flex justify-between items-center">
         <div className="text-3xl">Trang tổng quan</div>
-        <Button startIcon={<AddIcon />} variant="contained" color="error">
+        <Button
+          sx={{ color: "white" }}
+          startIcon={<AddIcon />}
+          variant="contained"
+          color="secondary"
+        >
           Tạo yêu cầu
         </Button>
       </div>

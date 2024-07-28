@@ -12,7 +12,9 @@ export default function PrivateRoute({ children }: IPrivateRouteProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [token, user] = useAuthStore((s) => [s.token, s.user], shallow);
-  console.log("🚀 ~ PrivateRoute ~ user:", user)
+  useEffect(() => {
+    console.log("🚀 ~ PrivateRoute ~ user:", user);
+  }, [user]);
 
   useEffect(() => {
     if (!token || !user)

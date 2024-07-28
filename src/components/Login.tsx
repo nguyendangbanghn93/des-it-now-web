@@ -36,7 +36,7 @@ export default function Login(_props: ILoginProps) {
 
   useEffect(() => {
     if (data) {
-      toasts.success("Đăng ký thành công");
+      toasts.success("Đăng nhập thành công");
       setUser(data?.user);
       setToken(data?.jwt);
     }

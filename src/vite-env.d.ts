@@ -113,13 +113,14 @@ interface ISizeImage {
 }
 
 interface IPagination {
-  page: number;
-  pageSize: number;
-  pageCount: number;
-  total: number;
+  page?: number;
+  pageSize?: number;
+  pageCount?: number;
+  total?: number;
 }
 
 interface IRequest {
+  quantity: number;
   id: number;
   name?: any;
   status: string;
@@ -127,14 +128,36 @@ interface IRequest {
   productType: string;
   totalPrice: number;
   createdAt: string;
+  creator: IUser;
+  photos: IFileData[];
   updatedAt: string;
   publishedAt: string;
+  note: string;
   team: ITeam;
+  assign: IUser;
+  logs: {
+    updatedAt: Date;
+    status: "todo" | "doing" | "review" | "needEdit" | "done";
+  };
 }
+
+// enum ERequestStatus {
+//   todo = "todo",
+//   doing = "doing",
+//   review = "review",
+//   needEdit = "needEdit",
+//   done = "done",
+// }
+
 interface ITeam {
   id: number;
   name: string;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
+}
+
+interface ITransaction {
+  id?: Key;
+  [string]: any;
 }

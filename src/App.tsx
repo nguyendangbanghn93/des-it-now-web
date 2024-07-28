@@ -7,7 +7,8 @@ import Loading from "@/components/commons/Loading";
 import PrivateRoute from "@/components/PrivateRoute";
 import Requests from "@/pages/Requests";
 import Toasts from "@/components/commons/Toast";
-import { ConfigProvider } from "@/contexts/ConfigProvider";
+import { ConfigProvider } from "@/stores/useConfigStore";
+import FinancialManagement from "@/pages/FinancialManagement";
 
 function App() {
   return (
@@ -25,6 +26,10 @@ function App() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/requests" element={<Requests />} />
                     <Route path="/information" element={<Dashboard />} />
+                    <Route
+                      path="/financial"
+                      element={<FinancialManagement />}
+                    />
                   </Routes>
                 </ConfigProvider>
               </PrivateRoute>

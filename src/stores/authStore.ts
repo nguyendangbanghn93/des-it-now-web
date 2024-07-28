@@ -1,11 +1,7 @@
 import create from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-interface IUser {
-  id: string;
-  name: string;
-  // Thêm các trường khác mà bạn cần
-}
+
 
 interface IAuthState {
   token: string | null;

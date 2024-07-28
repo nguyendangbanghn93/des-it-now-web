@@ -23,6 +23,19 @@ const dialog = {
       )
     );
   },
+  info: ({ title = "", content = "Nội dung thông báo" }: IDialogOption) => {
+    container?.append(
+      renderToString(
+        <BaseDialog
+          open={true}
+          title={title}
+          content={content}
+          cancelButton={<></>}
+          okButton={"Đóng"}
+        />
+      )
+    );
+  },
 };
 
 export default dialog;

@@ -1,9 +1,10 @@
-import requestApi, { IRequestForm } from "@/api/request";
+import requestApi, { IRequestParams } from "@/api/request";
 import uploadApi from "@/api/upload";
 import BaseUpload from "@/components/bases/BaseUpload";
 import { loading } from "@/components/commons/Loading";
 import { toasts } from "@/components/commons/Toast";
-import { useConfigStore } from "@/contexts/ConfigProvider";
+import useConfigStore from "@/stores/useConfigStore";
+
 import {
   Card,
   Modal,
@@ -40,11 +41,11 @@ export default function CreateRequest({
     watch,
     setValue,
     reset,
-  } = useForm<IRequestForm>({
+  } = useForm<IRequestParams>({
     defaultValues: {
       productType: "",
       designType: "",
-      sampleQuantity: 1,
+      quantity: 1,
       totalPrice: 0,
       note: "",
     },
@@ -70,7 +71,7 @@ export default function CreateRequest({
 
   const productType = watch("productType");
   const designType = watch("designType");
-  const sampleQuantity = watch("sampleQuantity");
+  const quantity = watch("quantity");
 
   useEffect(() => {
     setValue("designType", undefined);
@@ -78,18 +79,18 @@ export default function CreateRequest({
   }, [productType]);
 
   useEffect(() => {
-    if (productType && designType && sampleQuantity) {
+    if (productType && designType && quantity) {
       const price = prices.find(
         (p) =>
           p.productType?.id === Number(productType) &&
           p.designType?.id === Number(designType)
       );
 
-      setValue("totalPrice", Number(price?.price) * sampleQuantity || 0);
+      setValue("totalPrice", Number(price?.price) * quantity || 0);
     } else {
       setValue("totalPrice", 0);
     }
-  }, [designType, prices, productType, sampleQuantity, setValue]);
+  }, [designType, prices, productType, quantity, setValue]);
 
   const designTypes = prices.reduce((d: IDesignType[], e) => {
     if (e.productType.id === Number(productType)) {
@@ -99,7 +100,7 @@ export default function CreateRequest({
     return d;
   }, []);
 
-  const onSubmit = async (data: IRequestForm) => {
+  const onSubmit = async (data: IRequestParams) => {
     for (let i = 0; i < data?.photos?.length; i++) {
       const photo = data?.photos[i];
       if (!_.get(photo, "url")) {
@@ -112,7 +113,7 @@ export default function CreateRequest({
         }
       }
     }
-    mutate(data as IRequestForm);
+    mutate(data as IRequestParams);
   };
 
   return (
@@ -185,17 +186,17 @@ export default function CreateRequest({
 
             {/* Second Row */}
             <div className="w-[calc(50%-16px)]">
-              <label htmlFor="sampleQuantity">Số lượng mẫu</label>
+              <label htmlFor="quantity">Số lượng mẫu</label>
               <TextField
                 type="number"
                 fullWidth
-                {...register("sampleQuantity", {
+                {...register("quantity", {
                   required: "Trường này là bắt buộc",
                   validate: (value) =>
                     value >= 1 || "Giá trị phải lớn hơn hoặc bằng 1",
                 })}
-                error={!!errors.sampleQuantity}
-                helperText={errors.sampleQuantity?.message}
+                error={!!errors.quantity}
+                helperText={errors.quantity?.message}
               />
             </div>
 
@@ -265,7 +266,7 @@ export default function CreateRequest({
                 Hủy
               </Button>
               <Button
-                sx={{ color: "white", background: "" }}
+                sx={{ color: "white" }}
                 type="submit"
                 variant="contained"
                 color="secondary"
