@@ -1,24 +1,24 @@
 import {
-    Button,
-    Card,
-    MenuItem,
-    Paper,
-    Select,
-    Tab,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Tabs,
+  Button,
+  Card,
+  MenuItem,
+  Paper,
+  Select,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Tabs,
 } from "@mui/material";
 
 import requestApi, {
-    ESortRequest,
-    IFindRequestParams,
-    sortOptions,
+  ESortRequest,
+  IFindRequestParams,
+  sortOptions,
 } from "@/api/request";
 import teamApi from "@/api/team";
 import BaseTextField from "@/components/bases/BaseTextField";
@@ -159,8 +159,8 @@ export default function Requests(_props: IRequestsProps) {
         handleClose={() => setOpenCreateRequest(false)}
       />
       {context}
-      <div className="container mx-auto mt-20">
-        <div className="flex justify-between items-center mb-4">
+      <div className="container mx-auto mt-20 p-4 flex flex-col gap-4">
+        <div className="flex justify-between items-center">
           <div className="text-3xl">Danh sách yêu cầu</div>
           <Button
             onClick={addRequestClick}

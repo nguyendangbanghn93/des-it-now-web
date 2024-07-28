@@ -1,7 +1,6 @@
 import transactionApi from "@/api/transaction";
 import { loading } from "@/components/commons/Loading";
 import { toasts } from "@/components/commons/Toast";
-import { Unstable_NumberInput as NumberInput } from "@mui/base/Unstable_NumberInput";
 
 import {
   Card,
@@ -99,10 +98,11 @@ export default function CreateTransaction({
                   name="amount"
                   render={({ field }) => {
                     return (
-                      <TextField
+                      <input
+                        className="border rounded-lg p-2 outline-blue-500"
                         type="number"
-                        error={!!errors.amount}
-                        multiline
+                        // error={!!errors.amount}
+                        // multiline
                         {...field}
                       />
                     );

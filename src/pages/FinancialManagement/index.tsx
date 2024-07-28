@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Button,
   Card,
+  Grid,
   IconButton,
   MenuItem,
   Paper,
@@ -14,16 +15,19 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import { Add, Link } from "@mui/icons-material";
+import { Add, Link, Receipt, Check, AccessTime } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
-import transactionApi from "@/api/transaction";
+import transactionApi, {
+  ESortTransaction,
+  IFindTransactionParams,
+  sortTransactionOptions,
+} from "@/api/transaction";
 import _ from "lodash";
 import CreateTransaction from "@/pages/FinancialManagement/CreateTransaction";
 import dayjs from "dayjs";
 import utils from "@/utils";
-
 interface Column {
-  id: "name" | "code" | "population" | "size" | "density" | any;
+  id: string;
   label: string;
   minWidth?: number;
   align?: "right";
@@ -31,10 +35,13 @@ interface Column {
 }
 
 export default function FinancialManagement() {
+  const [params, setParams] = useState<IFindTransactionParams>({
+    pagination: { page: 1, pageSize: 10 },
+    sort: ESortTransaction["createdAt:desc"],
+  });
   const { data: dataRequests, refetch } = useQuery({
-    queryFn: () =>
-      transactionApi.find({ pagination: { page: 1, pageSize: 10 } }),
-    queryKey: ["queryFn"],
+    queryFn: () => transactionApi.find(params),
+    queryKey: ["queryFn", Object.values(params.pagination), params.sort],
   });
 
   const columns: readonly Column[] = [
@@ -91,8 +98,9 @@ export default function FinancialManagement() {
           refetchTransaction={refetch}
         />
       )}
-      <div className="container mx-auto mt-20">
-        <div className="flex justify-between items-center">
+
+      <div className="container mx-auto mt-20 p-4 flex flex-col gap-4">
+        <div className="flex justify-between items-center ">
           <div className="text-3xl">Quản lý tài chính</div>
 
           <Button
@@ -106,14 +114,68 @@ export default function FinancialManagement() {
           </Button>
         </div>
 
+        <Grid spacing={2} container>
+          {[
+            {
+              icon: Receipt,
+              title: "Tổng tiền đã nạp",
+              amount: 5000000,
+              sub: "Từ 12 invoices",
+            },
+            {
+              icon: Check,
+              title: "Dã chi tiêu",
+              amount: 3000000,
+              sub: "Từ 30 giao dịch",
+            },
+            {
+              icon: AccessTime,
+              title: "Số dư khả dụng",
+              amount: 2000000,
+              sub: "Có thể sử dụng",
+            },
+          ].map((d, i) => {
+            const Icon = d.icon;
+            return (
+              <Grid key={i} item xs={4}>
+                <Card className="p-4">
+                  <div className="flex items-center gap-4">
+                    <Card sx={{ borderRadius: "100%", padding: 1 }}>
+                      <Icon />
+                    </Card>
+                    <div>
+                      <div className="text-gray-500 text-sm">
+                        {d.title}
+                      </div>
+                      <div className="font-bold">{utils.formatMoney(d.amount || 0)}</div>
+                      <div className="text-gray-500 text-sm">
+                        {d.sub}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+
         <Card className="p-4">
-          <Select className="w-[150px]" size="small">
-            <MenuItem value={""}></MenuItem>
-            {/* {sortOptions.map((item, i) => (
+          <Select
+            value={params.sort}
+            className="w-[150px]"
+            size="small"
+            onChange={(e) =>
+              setParams((s) => ({
+                ...s,
+                sort: e.target.value as ESortTransaction,
+              }))
+            }
+          >
+            {sortTransactionOptions.map((item, i) => (
               <MenuItem key={i} value={item.value}>
                 {item.label}
               </MenuItem>
-            ))} */}
+            ))}
           </Select>
           <div className="mt-4">
             <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -178,19 +240,19 @@ export default function FinancialManagement() {
                   rowsPerPage={dataRequests?.meta.pagination?.pageSize || 10}
                   page={dataRequests?.meta.pagination.page - 1}
                   onRowsPerPageChange={(e) => {
-                    // setParams((s) => ({
-                    //   ...s,
-                    //   pagination: {
-                    //     ...s.pagination,
-                    //     pageSize: e.target.value as unknown as number,
-                    //   },
-                    // }));
+                    setParams((s) => ({
+                      ...s,
+                      pagination: {
+                        ...s.pagination,
+                        pageSize: e.target.value as unknown as number,
+                      },
+                    }));
                   }}
                   onPageChange={(_e, page: number) => {
-                    // setParams((s) => ({
-                    //   ...s,
-                    //   pagination: { ...s.pagination, page: page },
-                    // }));
+                    setParams((s) => ({
+                      ...s,
+                      pagination: { ...s.pagination, page: page },
+                    }));
                   }}
                 />
               )}
