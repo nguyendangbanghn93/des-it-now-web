@@ -1,5 +1,5 @@
 # Stage 1: Base stage
-FROM node:20-alpine AS base
+FROM node:18-alpine3.18 AS base
 WORKDIR /app
 COPY package.json yarn.lock ./
 
@@ -14,7 +14,7 @@ ARG NODE_ENV
 RUN if [ "$NODE_ENV" = "production" ]; then yarn build; fi
 
 # Stage 4: Production stage
-FROM node:20-alpine AS production
+FROM node:18-alpine3.18 AS production
 WORKDIR /app
 COPY --from=dependencies /app .
 COPY --from=build /app/dist ./dist
