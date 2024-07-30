@@ -1,20 +1,17 @@
-version: "3.8"
-
 services:
-  app:
+  web:
+    image: web
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        BUILD_ENV: ${NODE_ENV}
+      dockerfile: ./Dockerfile.prod
+    environment:
+      NODE_ENV: ${NODE_ENV}
     ports:
-      - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules
+      - 3000:3000
     networks:
       - strapi
 networks:
   strapi:
     name: Strapi
     driver: bridge
+    external: true
