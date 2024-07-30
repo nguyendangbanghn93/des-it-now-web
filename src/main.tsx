@@ -42,7 +42,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <SettingsProvider>
     <SettingsConsumer>
-      {(settings) => {
+      {() => {
         //   const theme = createTheme({
         //     colorPreset: settings.colorPreset,
         //     contrast: settings.contrast,

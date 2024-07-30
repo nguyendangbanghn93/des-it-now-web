@@ -1,5 +1,5 @@
 import requestApi, { IRequestParams } from "@/api/request";
-import uploadApi from "@/api/upload";
+// import uploadApi from "@/api/upload";
 import BaseUpload from "@/components/bases/BaseUpload";
 import { loading } from "@/components/commons/Loading";
 import { toasts } from "@/components/commons/Toast";
@@ -101,18 +101,18 @@ export default function CreateRequest({
   }, []);
 
   const onSubmit = async (data: IRequestParams) => {
-    for (let i = 0; i < data?.photos?.length; i++) {
-      const photo = data?.photos[i];
-      if (!_.get(photo, "url")) {
-        try {
-          const file = await uploadApi.uploadFile(photo as File);
-          data.photos[i] = file;
-        } catch (error) {
-          console.log("🚀 ~ onSubmit ~ error:", error);
-          return toasts.error("Upload ảnh thất bại, vui lòng thử lại");
-        }
-      }
-    }
+    // for (let i = 0; i < data?.photos?.length; i++) {
+    //   const photo = data?.photos[i];
+    //   if (!_.get(photo, "url")) {
+    //     try {
+    //       const file = await uploadApi.uploadFile(photo as File);
+    //       data.photos[i] = file;
+    //     } catch (error) {
+    //       console.log("🚀 ~ onSubmit ~ error:", error);
+    //       return toasts.error("Upload ảnh thất bại, vui lòng thử lại");
+    //     }
+    //   }
+    // }
     mutate(data as IRequestParams);
   };
 
@@ -193,7 +193,7 @@ export default function CreateRequest({
                 {...register("quantity", {
                   required: "Trường này là bắt buộc",
                   validate: (value) =>
-                    value >= 1 || "Giá trị phải lớn hơn hoặc bằng 1",
+                    (value && value >= 1) || "Giá trị phải lớn hơn hoặc bằng 1",
                 })}
                 error={!!errors.quantity}
                 helperText={errors.quantity?.message}

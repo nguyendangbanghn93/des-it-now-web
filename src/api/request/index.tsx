@@ -58,7 +58,7 @@ const requestApi = {
     const queryString = qs.stringify(queryParams, {
       encode: false,
 
-      filter(prefix, value) {
+      filter(_, value) {
         return !value ? undefined : value;
       },
     });

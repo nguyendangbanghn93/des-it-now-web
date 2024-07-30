@@ -4,7 +4,6 @@ import FilterDramaIcon from "@mui/icons-material/FilterDrama";
 import { IconButton } from "@mui/material";
 // import { useMutation } from "@tanstack/react-query";
 // import uploadApi from "@/api/upload";
-import utils from "@/utils";
 const fileTypes = ["JPG", "PNG"];
 
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -39,7 +38,7 @@ const BaseUpload = React.forwardRef(
     };
     return (
       <>
-        <div className="flex gap-4 flex-wrap " ref={ref}>
+        <div className="flex gap-4 flex-wrap ">
           {files?.map((f, i) => {
             return (
               <div className="relative group" key={i}>
@@ -65,6 +64,7 @@ const BaseUpload = React.forwardRef(
         </div>
         <FileUploader
           {...props}
+          ref={ref}
           className="mt-5"
           multiple
           handleChange={handleChange}
