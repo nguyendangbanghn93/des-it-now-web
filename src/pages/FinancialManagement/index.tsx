@@ -80,7 +80,7 @@ export default function FinancialManagement() {
     {
       id: "qrCode",
       label: "Link thanh toán",
-      render(val, record) {
+      render(_, record) {
         return (
           <IconButton
             onClick={() => {

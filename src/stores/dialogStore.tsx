@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import _ from "lodash";
 import { createWithEqualityFn } from "zustand/traditional";
@@ -6,7 +6,6 @@ import BaseDialog, { IBaseDialogProps } from "@/components/bases/BaseDialog";
 import ReactDOM from "react-dom";
 
 import { v4 as uuidv4 } from "uuid";
-import { info } from "console";
 
 interface IDialogState {
   dialogs: Record<string, JSX.Element>;

@@ -10,7 +10,6 @@ import { CssBaseline } from "@mui/material";
 import ReactDOM from "react-dom/client";
 // import { createTheme } from "@/theme";
 import { toasts } from "@/components/commons/Toast.tsx";
-import useAuthStore from "@/stores/authStore.ts";
 import { DialogProvider } from "@/stores/dialogStore.tsx";
 
 const queryClient = new QueryClient({
