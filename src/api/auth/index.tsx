@@ -1,17 +1,21 @@
 import http from "@/api/http";
 
 export interface IAuthParams {
-  username: string;
+  identifier: string;
   password: string;
 }
 
 const authApi = {
   async register(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
-    const res = await http.post("/api/auth/register", data);
+    const res = await http.post("/api/auth/register", {
+      email: data.identifier,
+      username: data.identifier,
+      password: data.password,
+    });
     return res.data;
   },
   async login(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
-    const res = await http.post("/api/auth/login", data);
+    const res = await http.post("/api/auth/local", data);
     return res.data;
   },
 };

@@ -1,26 +1,26 @@
-import requestApi, { IRequestParams } from "@/api/request";
+import requestApi, { IRequestFormCreate } from "@/api/request";
 // import uploadApi from "@/api/upload";
 import BaseUpload from "@/components/bases/BaseUpload";
 import { loading } from "@/components/commons/Loading";
 import { toasts } from "@/components/commons/Toast";
-import useConfigStore from "@/stores/useConfigStore";
+import useConfigStore from "@/stores/configStore";
 
 import {
-  Card,
-  Modal,
   Button,
+  Card,
   FormControl,
   FormHelperText,
   MenuItem,
+  Modal,
   Select,
-  TextField,
   Stack,
+  TextField,
   Tooltip,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import _ from "lodash";
 import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 export interface ICreateRequestProps {
   open?: boolean;
@@ -41,7 +41,7 @@ export default function CreateRequest({
     watch,
     setValue,
     reset,
-  } = useForm<IRequestParams>({
+  } = useForm<IRequestFormCreate>({
     defaultValues: {
       productType: "",
       designType: "",
@@ -100,20 +100,8 @@ export default function CreateRequest({
     return d;
   }, []);
 
-  const onSubmit = async (data: IRequestParams) => {
-    // for (let i = 0; i < data?.photos?.length; i++) {
-    //   const photo = data?.photos[i];
-    //   if (!_.get(photo, "url")) {
-    //     try {
-    //       const file = await uploadApi.uploadFile(photo as File);
-    //       data.photos[i] = file;
-    //     } catch (error) {
-    //       console.log("🚀 ~ onSubmit ~ error:", error);
-    //       return toasts.error("Upload ảnh thất bại, vui lòng thử lại");
-    //     }
-    //   }
-    // }
-    mutate(data as IRequestParams);
+  const onSubmit = async (data: IRequestFormCreate) => {
+    mutate(data as IRequestFormCreate);
   };
 
   return (

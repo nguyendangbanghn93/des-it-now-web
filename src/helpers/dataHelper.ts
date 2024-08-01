@@ -1,4 +1,4 @@
-import useConfigStore from "@/stores/useConfigStore";
+import useConfigStore from "@/stores/configStore";
 
 const dataHelper = {
   getDesign(id?: string | number) {

@@ -26,6 +26,15 @@ import _ from "lodash";
 import CreateTransaction from "@/pages/FinancialManagement/CreateTransaction";
 import dayjs from "dayjs";
 import utils from "@/utils";
+import {
+  ETransactionStatus,
+  ETransactionType,
+  TransactionStatus,
+  TransactionType,
+} from "@/utils/constants";
+import teamApi from "@/api/team";
+import { dialog } from "@/stores/dialogStore";
+import QrCode from "@/components/commons/QrCode";
 interface Column {
   id: string;
   label: string;
@@ -39,10 +48,22 @@ export default function FinancialManagement() {
     pagination: { page: 1, pageSize: 10 },
     sort: ESortTransaction["createdAt:desc"],
   });
+
   const { data: dataRequests, refetch } = useQuery({
     queryFn: () => transactionApi.find(params),
-    queryKey: ["queryFn", Object.values(params.pagination), params.sort],
+    queryKey: [
+      "transactionApi.find",
+      Object.values(params.pagination),
+      params.sort,
+    ],
   });
+
+  const { data: team } = useQuery({
+    queryFn: teamApi.getMyTeam,
+    queryKey: ["teamApi.getMyTeam"],
+  });
+
+  console.log(team);
 
   const columns: readonly Column[] = [
     {
@@ -50,32 +71,55 @@ export default function FinancialManagement() {
       label: "Mã giao dịch",
     },
     {
+      id: "type",
+      label: "Loại",
+      render(val) {
+        return TransactionType[val as ETransactionType] || val;
+      },
+    },
+    {
       id: "qrCode",
       label: "Link thanh toán",
-      render(val) {
-        return val ? (
+      render(val, record) {
+        return (
           <IconButton
             onClick={() => {
-              window.open(val);
+              dialog.info({
+                title: "QR Thanh toán",
+                content: (
+                  <>
+                    <QrCode
+                      amount={record.amount}
+                      purpose={`DESITNOW${record.id}`}
+                    />
+                  </>
+                ),
+              });
             }}
           >
             <Link />
           </IconButton>
-        ) : null;
+        );
       },
     },
     {
       id: "amount",
       label: "Số tiền",
-      render(val) {
-        return utils.formatMoney(val);
+      render(val, record: ITransaction) {
+        const isSpending = record?.type === "spending";
+        return (
+          <b className={isSpending ? "text-red-500" : "text-green-500"}>
+            {isSpending ? "- " : ""}
+            {utils.formatMoney(val)}
+          </b>
+        );
       },
     },
     {
       id: "status",
       label: "Trạng thái",
       render(val) {
-        return val;
+        return TransactionStatus[val as ETransactionStatus] || val;
       },
     },
     {
@@ -119,19 +163,19 @@ export default function FinancialManagement() {
             {
               icon: Receipt,
               title: "Tổng tiền đã nạp",
-              amount: 5000000,
-              sub: "Từ 12 invoices",
+              amount: team?.totalAmountDeposit || 0,
+              sub: `Từ ${team?.totalDeposit || 0} invoices`,
             },
             {
               icon: Check,
-              title: "Dã chi tiêu",
-              amount: 3000000,
-              sub: "Từ 30 giao dịch",
+              title: "Đã chi tiêu",
+              amount: team?.totalAmountSpending || 0,
+              sub: `Từ ${team?.totalSpending} giao dịch`,
             },
             {
               icon: AccessTime,
               title: "Số dư khả dụng",
-              amount: 2000000,
+              amount: team?.balance || 0,
               sub: "Có thể sử dụng",
             },
           ].map((d, i) => {
@@ -144,13 +188,11 @@ export default function FinancialManagement() {
                       <Icon />
                     </Card>
                     <div>
-                      <div className="text-gray-500 text-sm">
-                        {d.title}
+                      <div className="text-gray-500 text-sm">{d.title}</div>
+                      <div className="font-bold">
+                        {utils.formatMoney(d.amount || 0)}
                       </div>
-                      <div className="font-bold">{utils.formatMoney(d.amount || 0)}</div>
-                      <div className="text-gray-500 text-sm">
-                        {d.sub}
-                      </div>
+                      <div className="text-gray-500 text-sm">{d.sub}</div>
                     </div>
                   </div>
                 </Card>

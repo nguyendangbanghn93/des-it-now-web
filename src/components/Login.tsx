@@ -10,11 +10,12 @@ import { toasts } from "@/components/commons/Toast";
 import useAuthStore from "@/stores/authStore";
 import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
+import validator from "@/utils/validator";
 
 export interface ILoginProps {}
 
 type ILoginFormInputs = {
-  username: string;
+  identifier: string;
   password: string;
 };
 
@@ -40,6 +41,7 @@ export default function Login(_props: ILoginProps) {
       setUser(data?.user);
       setToken(data?.jwt);
     }
+      console.log("🚀 ~ useEffect ~ data:", data)
   }, [data, setToken, setUser]);
 
   useEffect(() => {
@@ -64,15 +66,16 @@ export default function Login(_props: ILoginProps) {
         onSubmit={handleSubmit(onSubmit)}
       >
         <BaseTextField
-          id="username"
-          label="Email/Username"
+          id="identifier"
+          label="Email"
           required
           autoFocus
-          {...register("username", {
-            required: "Email/username là bắt buộc",
+          {...register("identifier", {
+            required: "Email là bắt buộc",
+            validate: (value: string) => validator.email(value) || true,
           })}
-          error={!!errors.username}
-          helperText={errors.username ? errors.username.message : ""}
+          error={!!errors.identifier}
+          helperText={errors.identifier ? errors.identifier.message : ""}
         />
         <BaseTextField
           id="password"

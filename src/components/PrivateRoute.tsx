@@ -22,5 +22,5 @@ export default function PrivateRoute({ children }: IPrivateRouteProps) {
         state: { backRoute: `${location.pathname}${location.search}` },
       });
   }, [location.pathname, location.search, navigate, token, user]);
-  return <>{children}</>;
+  return token ? children : null;
 }

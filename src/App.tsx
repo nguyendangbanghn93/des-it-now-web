@@ -7,7 +7,7 @@ import Loading from "@/components/commons/Loading";
 import PrivateRoute from "@/components/PrivateRoute";
 import Requests from "@/pages/Requests";
 import Toasts from "@/components/commons/Toast";
-import { ConfigProvider } from "@/stores/useConfigStore";
+import { ConfigProvider } from "@/stores/configStore";
 import FinancialManagement from "@/pages/FinancialManagement";
 
 function App() {

@@ -1,4 +1,7 @@
 import env from "@/env";
+import { QRPay, BanksObject } from "vietnam-qr-pay";
+import QRCode from "qrcode";
+console.log(BanksObject.mbbank.bin);
 
 const utils = {
   getImageStrapi: (
@@ -12,7 +15,7 @@ const utils = {
     } = {}
   ) => {
     const objImg = image?.formats?.[size] || image?.formats?.["small"];
-    const url = `${env.API_URL}${objImg?.url}` || urlDefault;
+    const url = `${env.VITE_API_URL}${objImg?.url}` || urlDefault;
     return url;
   },
   formatMoney: (amount: number) => {
@@ -21,24 +24,23 @@ const utils = {
       currency: "VND",
     }).format(amount);
   },
-  objectToStrapiQuery: (obj: any) => {
-    const result: any = {};
+  async generateBankQRCode({
+    amount,
+    purpose,
+  }: {
+    amount: string;
+    purpose: string;
+  }) {
+    const qrPay = QRPay.initVietQR({
+      bankBin: BanksObject.mbbank.bin,
+      bankNumber: env.VITE_BANK_NUMBER,
+      amount: String(amount),
+      purpose: purpose,
+    });
 
-    function flattenObject(current: any, property: any) {
-      if (Object(current) !== current || Array.isArray(current)) {
-        result[property] = current;
-      } else {
-        for (const key in current) {
-          flattenObject(current[key], property ? `${property}[${key}]` : key);
-        }
-      }
-    }
+    const content = qrPay.build();
 
-    for (const key in obj) {
-      flattenObject(obj[key], key);
-    }
-
-    return result;
+    return await QRCode.toDataURL(content);
   },
 };
 

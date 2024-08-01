@@ -1,9 +1,10 @@
 import http from "@/api/http";
+import uploadApi from "@/api/upload";
 import { ERequestStatus } from "@/utils/constants";
 import _ from "lodash";
 import qs from "qs";
 
-export interface IRequestParams {
+export interface IRequestFormCreate {
   id?: number;
   productType?: string;
   designType?: string;
@@ -32,7 +33,16 @@ export interface IFindRequestParams {
 }
 
 const requestApi = {
-  create: async (data: IRequestParams): Promise<IRequest> => {
+  create: async (data: IRequestFormCreate): Promise<IRequest> => {
+    const uploadPhotos = data?.photos?.map((f: any) => {
+      if (f.url) {
+        return f;
+      } else {
+        return uploadApi.uploadFile(f as File);
+      }
+    });
+    console.log("🚀 ~ uploadPhotos ~ uploadPhotos:", uploadPhotos);
+    data.photos = uploadPhotos;
     const res = await http.post("/api/requests", { data });
     return res?.data;
   },
@@ -72,7 +82,7 @@ const requestApi = {
     data,
   }: {
     id: number;
-    data: IRequestParams;
+    data: IRequestFormCreate;
   }): Promise<IRequest> => {
     const res = await http.put(`/api/requests/${id}`, { data });
     return res?.data;

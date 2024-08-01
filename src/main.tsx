@@ -11,6 +11,7 @@ import ReactDOM from "react-dom/client";
 // import { createTheme } from "@/theme";
 import { toasts } from "@/components/commons/Toast.tsx";
 import useAuthStore from "@/stores/authStore.ts";
+import { DialogProvider } from "@/stores/dialogStore.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,9 +29,9 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: false,
       throwOnError(error: any) {
-        if (error?.response?.data?.error?.name === "UnauthorizedError") {
-          useAuthStore.getState().logout();
-        }
+        // if (error?.response?.data?.error?.name === "UnauthorizedError") {
+        //   useAuthStore.getState().logout();
+        // }
         console.log("🚀 ~ onError ~ error, variables, context:", error);
         toasts.error(error?.response?.data?.error?.message || error.message);
         return false;
@@ -64,7 +65,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <CssBaseline />
 
               <QueryClientProvider client={queryClient}>
-                <App />
+                <DialogProvider>
+                  <App />
+                </DialogProvider>
               </QueryClientProvider>
             </BrowserRouter>
           </ThemeProvider>

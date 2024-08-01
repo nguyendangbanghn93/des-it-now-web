@@ -10,11 +10,12 @@ import { toasts } from "@/components/commons/Toast";
 import useAuthStore from "@/stores/authStore";
 import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
+import validator from "@/utils/validator";
 
 export interface IRegisterProps {}
 
 type IRegisterFormInputs = {
-  username: string;
+  email: string;
   password: string;
   repeatPassword: string;
 };
@@ -38,6 +39,7 @@ export default function Register(_props: IRegisterProps) {
 
   useEffect(() => {
     if (data) {
+      console.log("🚀 ~ useEffect ~ data:", data);
       toasts.success("Đăng ký thành công");
       setUser(data.user);
       setToken(data.jwt);
@@ -49,12 +51,12 @@ export default function Register(_props: IRegisterProps) {
   }, [isPending]);
 
   const onSubmit: SubmitHandler<IRegisterFormInputs> = ({
-    username,
+    email,
     password,
     repeatPassword,
   }: IRegisterFormInputs) => {
     if (password === repeatPassword) {
-      mutate({ username, password });
+      mutate({ identifier: email, password });
     } else {
       setError("repeatPassword", { message: "Nhắc lại mật khẩu không đúng" });
     }
@@ -76,14 +78,15 @@ export default function Register(_props: IRegisterProps) {
         onSubmit={handleSubmit(onSubmit)}
       >
         <BaseTextField
-          label="Email/Username"
+          label="Email/email"
           required
           autoFocus
-          {...register("username", {
-            required: "Email/username là bắt buộc",
+          {...register("email", {
+            required: "Email/email là bắt buộc",
+            validate: (value: string) => validator.email(value) || true,
           })}
-          error={!!errors.username}
-          helperText={errors.username ? errors.username.message : ""}
+          error={!!errors.email}
+          helperText={errors.email ? errors.email.message : ""}
         />
         <BaseTextField
           type="password"

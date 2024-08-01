@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React from "react";
 
 export interface IBaseDialogProps {
   title?: React.ReactNode;
@@ -15,59 +15,59 @@ export interface IBaseDialogProps {
   okHandle?: () => void;
   cancelButton?: React.ReactNode | string;
   okButton?: React.ReactNode | string;
+  close?: () => void;
 }
 
-function BaseDialog(_props: any, ref: any) {
-  const [config, setConfig] = useState<IBaseDialogProps>({
-    title: "Thông báo",
-    content: "Nội dung",
-    cancelButton: "Đóng",
-    okButton: "Đồng ý",
-  });
-  const [open, setOpen] = useState<boolean>(false);
-  useImperativeHandle(
-    ref,
-    () => ({
-      open: (config: IBaseDialogProps) => {
-        setConfig((s) => ({ ...s, config }));
-      },
-      close: () => setOpen(false),
-    }),
-    [setConfig]
-  );
-  if (!open) {
-    return null;
-  }
+export default function BaseDialog({
+  title,
+  content,
+  open,
+  cancelHandle,
+  okHandle,
+  close,
+  cancelButton = "Đóng",
+  okButton = "Đồng ý",
+}: IBaseDialogProps) {
   return (
     <Dialog
-      sx={{ "& .MuiDialog-paper": { width: "80%", maxHeight: 435 } }}
+      sx={{ "& .MuiDialog-paper": { maxWidth: "80vw", maxHeight: "80vh" } }}
       maxWidth="xs"
       open={!!open}
     >
-      <DialogTitle>{config.title}</DialogTitle>
-      <DialogContent dividers>{config.content}</DialogContent>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent dividers>{content}</DialogContent>
       <DialogActions>
-        {typeof config.cancelButton === "string" ? (
+        {typeof cancelButton === "string" ? (
           <Button
             variant="contained"
             color="inherit"
-            onClick={config.cancelHandle}
+            onClick={() => {
+              cancelHandle?.();
+              close?.();
+            }}
           >
-            {config.cancelButton}
+            {cancelButton}
           </Button>
         ) : (
-          config.cancelButton
+          cancelButton
         )}
 
-        {typeof config.okButton === "string" ? (
-          <Button variant="contained" color="error" onClick={config.okHandle}>
-            {config.okButton}
+        {typeof okButton === "string" ? (
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{ color: "white" }}
+            onClick={() => {
+              okHandle?.();
+              close?.();
+            }}
+          >
+            {okButton}
           </Button>
         ) : (
-          config.okButton
+          okButton
         )}
       </DialogActions>
     </Dialog>
   );
 }
-export default forwardRef(BaseDialog);

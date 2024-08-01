@@ -1,19 +1,20 @@
 import transactionApi from "@/api/transaction";
 import { loading } from "@/components/commons/Loading";
+import QrCode from "@/components/commons/QrCode";
 import { toasts } from "@/components/commons/Toast";
 
 import {
-  Card,
-  Modal,
   Button,
+  Card,
   FormControl,
   FormHelperText,
+  Modal,
   Stack,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import _ from "lodash";
 import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 export interface ICreateTransactionProps {
   open?: boolean;
@@ -67,12 +68,10 @@ export default function CreateTransaction({
       }}
     >
       <Card className="bg-white w-[500px] p-8">
-        {data?.qrCode ? (
+        {data ? (
           <>
-            <div className="flex justify-center">
-              <img className="w-[300px]" src={data?.qrCode} alt="" />
-            </div>
-            <div className="text-center">
+            <QrCode amount={data.amount} purpose={`DESITNOW${data.id}`} />
+            <div className="text-center mt-4">
               Vui lòng thanh toán chờ trong giây lát và tải lại trang để cập
               nhật trạng thái thanh toán
             </div>

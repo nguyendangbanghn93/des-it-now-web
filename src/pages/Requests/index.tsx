@@ -23,7 +23,6 @@ import requestApi, {
 import teamApi from "@/api/team";
 import BaseTextField from "@/components/bases/BaseTextField";
 import dataHelper from "@/helpers/dataHelper";
-import useDiaLog from "@/hooks/useDialog";
 import CreateRequest from "@/pages/Requests/CreateRequest";
 import RequestStatusComponent from "@/pages/Requests/RequestStatusComponent";
 import RequestTableAction from "@/pages/Requests/RequestTableAction";
@@ -34,8 +33,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import _ from "lodash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
+import { dialog } from "@/stores/dialogStore";
 
 interface Column {
   id: "name" | "code" | "population" | "size" | "density" | any;
@@ -48,8 +49,16 @@ interface Column {
 export interface IRequestsProps {}
 
 export default function Requests(_props: IRequestsProps) {
-  const { dialog, context } = useDiaLog();
   const [openCreateRequest, setOpenCreateRequest] = useState(false);
+
+  const location = useLocation();
+  const state = location.state as { create?: boolean };
+
+  useEffect(() => {
+    if (state?.create) {
+      setOpenCreateRequest(true);
+    }
+  }, [state?.create]);
 
   const [params, setParams] = useState<IFindRequestParams>({
     status: "",
@@ -135,10 +144,6 @@ export default function Requests(_props: IRequestsProps) {
         content:
           "Bạn không thuộc team nào vui lòng liên hệ với người khác để tham gia team hoặc tạo 1 team mới.",
         okButton: "Tạo team",
-        okHandle(close) {
-          // Tạo team
-          close();
-        },
       });
     } else {
       setOpenCreateRequest(true);
