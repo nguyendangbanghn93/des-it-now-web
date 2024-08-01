@@ -163,7 +163,6 @@ export default function Requests(_props: IRequestsProps) {
         open={openCreateRequest}
         handleClose={() => setOpenCreateRequest(false)}
       />
-      {context}
       <div className="container mx-auto mt-20 p-4 flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div className="text-3xl">Danh sách yêu cầu</div>
