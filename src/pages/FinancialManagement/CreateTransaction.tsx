@@ -70,7 +70,11 @@ export default function CreateTransaction({
       <Card className="bg-white w-[500px] p-8">
         {data ? (
           <>
-            <QrCode amount={data.amount} purpose={`DESITNOW${data.id}`} />
+            <QrCode
+              receiver={data.receiver}
+              amount={data.amount}
+              purpose={`DESITNOW${data.id}`}
+            />
             <div className="text-center mt-4">
               Vui lòng thanh toán chờ trong giây lát và tải lại trang để cập
               nhật trạng thái thanh toán

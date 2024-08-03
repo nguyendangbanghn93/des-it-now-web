@@ -1,7 +1,6 @@
 import env from "@/env";
 import { QRPay, BanksObject } from "vietnam-qr-pay";
 import QRCode from "qrcode";
-console.log(BanksObject.mbbank.bin);
 
 const utils = {
   getImageStrapi: (

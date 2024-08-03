@@ -189,4 +189,9 @@ interface ITransaction {
   qrCode?: any;
   paymentTime: string;
   updatedAt: string;
+  receiver: {
+    bankNumber: string;
+    bankName: string;
+    bankUsername: string;
+  };
 }

@@ -8,9 +8,9 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
 import ReactDOM from "react-dom/client";
-// import { createTheme } from "@/theme";
 import { toasts } from "@/components/commons/Toast.tsx";
 import { DialogProvider } from "@/stores/dialogStore.tsx";
+import useAuthStore from "@/stores/authStore.ts";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,9 +28,9 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: false,
       throwOnError(error: any) {
-        // if (error?.response?.data?.error?.name === "UnauthorizedError") {
-        //   useAuthStore.getState().logout();
-        // }
+        if (error?.response?.data?.error?.name === "UnauthorizedError") {
+          useAuthStore.getState().logout();
+        }
         console.log("🚀 ~ onError ~ error, variables, context:", error);
         toasts.error(error?.response?.data?.error?.message || error.message);
         return false;

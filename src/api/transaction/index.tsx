@@ -28,7 +28,7 @@ const transactionApi = {
     const res = await http.get("/api/transactions", { params });
     return res?.data;
   },
-  create: async (amount: number) => {
+  create: async (amount: number): Promise<ITransaction> => {
     const res = await http.post("/api/transactions", { amount });
     return res?.data;
   },

@@ -89,6 +89,7 @@ export default function FinancialManagement() {
                 content: (
                   <>
                     <QrCode
+                      receiver={record.receiver}
                       amount={record.amount}
                       purpose={`DESITNOW${record.id}`}
                     />
@@ -170,7 +171,7 @@ export default function FinancialManagement() {
               icon: Check,
               title: "Đã chi tiêu",
               amount: team?.totalAmountSpending || 0,
-              sub: `Từ ${team?.totalSpending} giao dịch`,
+              sub: `Từ ${team?.totalSpending || 0} giao dịch`,
             },
             {
               icon: AccessTime,

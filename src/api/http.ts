@@ -1,5 +1,4 @@
 import env from "@/env";
-import useAuthStore from "@/stores/authStore";
 import axios from "axios";
 
 const http = axios.create({
@@ -9,8 +8,6 @@ const http = axios.create({
 
 http.interceptors.request.use(
   function (config) {
-    const token = useAuthStore.getState().token;
-    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   function (error) {

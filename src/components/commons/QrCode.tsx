@@ -1,13 +1,17 @@
-import env from "@/env";
 import utils from "@/utils";
 import { useEffect, useState } from "react";
 
 export interface IQrCodeProps {
   amount: number;
   purpose: string;
+  receiver: {
+    bankNumber: string;
+    bankName: string;
+    bankUsername: string;
+  };
 }
 
-export default function QrCode({ amount, purpose }: IQrCodeProps) {
+export default function QrCode({ amount, purpose, receiver }: IQrCodeProps) {
   const [qrCode, setQrCode] = useState<string>("");
 
   useEffect(() => {
@@ -33,9 +37,13 @@ export default function QrCode({ amount, purpose }: IQrCodeProps) {
         <div className="text-center text-blue-700">
           <div>Số tiền: {utils.formatMoney(amount)}</div>
           <div>Nội dung CK: {purpose}</div>
-          <div>Tên chủ TK: {env.VITE_BANK_USER_NAME}</div>
-          <b className="">Số TK: {env.VITE_BANK_NUMBER}</b>
-          <div> {env.VITE_BANK_NAME}</div>
+          {receiver ? (
+            <>
+              <div>Tên chủ TK: {receiver.bankUsername}</div>
+              <b className="">Số TK: {receiver.bankNumber}</b>
+              <div> {receiver.bankName}</div>
+            </>
+          ) : null}
         </div>
       </div>
     </>
