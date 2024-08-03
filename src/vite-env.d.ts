@@ -65,8 +65,8 @@ interface IPrice {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  productType: IProductType;
-  designType: IDesignType;
+  productType: Omit<IProductType, "prices">;
+  designType: Omit<IDesignType, "prices">;
 }
 
 interface IListResponseDefault<T> {
@@ -135,8 +135,8 @@ interface IRequest {
   id: number;
   name?: any;
   status: string;
-  designType: string;
-  productType: string;
+  //   designType: string;
+  //   productType: string;
   totalPrice: number;
   createdAt: string;
   creator: IUser;
@@ -146,6 +146,7 @@ interface IRequest {
   note: string;
   team: ITeam;
   assign: IUser;
+  data: IPrice;
   logs: {
     updatedAt: Date;
     status: "todo" | "doing" | "review" | "needEdit" | "done";

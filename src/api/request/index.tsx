@@ -13,7 +13,7 @@ export interface IRequestFormCreate {
   status?: ERequestStatus;
   note?: string;
   photos?: Array<IFileData | File>;
-  data?: any;
+  data?: IPrice;
 }
 
 export enum ESortRequest {

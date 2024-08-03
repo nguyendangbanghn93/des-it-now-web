@@ -22,7 +22,6 @@ import requestApi, {
 } from "@/api/request";
 import teamApi from "@/api/team";
 import BaseTextField from "@/components/bases/BaseTextField";
-import dataHelper from "@/helpers/dataHelper";
 import CreateRequest from "@/pages/Requests/CreateRequest";
 import RequestStatusComponent from "@/pages/Requests/RequestStatusComponent";
 import RequestTableAction from "@/pages/Requests/RequestTableAction";
@@ -93,12 +92,12 @@ export default function Requests(_props: IRequestsProps) {
     {
       id: "productType",
       label: "Loại sản phẩm",
-      render: (value: number) => dataHelper.getProduct(value)?.name || value,
+      render: (_, record) => record?.data?.productType?.name,
     },
     {
       id: "designType",
       label: "Loại thiết kế",
-      render: (value: number) => dataHelper.getDesign(value)?.name || value,
+      render: (_, record) => record?.data?.designType?.name,
     },
     {
       id: "status",

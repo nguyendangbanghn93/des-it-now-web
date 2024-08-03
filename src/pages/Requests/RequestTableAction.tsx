@@ -18,7 +18,6 @@ import { CloseOutlined, AccessTime, EditOutlined } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { DateFormat, ERequestStatus, RequestStatus } from "@/utils/constants";
 import utils from "@/utils";
-import dataHelper from "@/helpers/dataHelper";
 import BaseDropdown from "@/components/bases/BaseDropdown";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import RequestStatusComponent from "@/pages/Requests/RequestStatusComponent";
@@ -219,15 +218,11 @@ const ContentDetail = ({
                 },
                 {
                   label: "Loại sản phẩm",
-                  value:
-                    dataHelper.getDesign(data.productType)?.name ||
-                    data.productType,
+                  value: data?.data?.productType?.name,
                 },
                 {
                   label: "Loại thiết kế",
-                  value:
-                    dataHelper.getDesign(data.designType)?.name ||
-                    data.designType,
+                  value: data?.data?.designType?.name,
                 },
                 {
                   label: "Số lượng mẫu",
