@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import QueryString from "qs";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useLocation, useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { shallow } from "zustand/shallow";
 
 export interface IForgotPasswordProps {}
@@ -59,6 +59,9 @@ export default function ForgotPassword() {
   return (
     <>
       <div className="font-bold text-2xl mb-4">Đặt lại mật khẩu</div>
+      <Link to={"/auth/login"} className="text-orange-600">
+        Đăng nhập ngay
+      </Link>
 
       <form
         className="flex flex-col gap-8 mt-8"
