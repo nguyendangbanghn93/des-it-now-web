@@ -149,7 +149,7 @@ interface IRequest {
   logs: {
     updatedAt: Date;
     status: "todo" | "doing" | "review" | "needEdit" | "done";
-  };
+  }[];
 }
 
 // enum ERequestStatus {
@@ -190,6 +190,7 @@ interface ITransaction {
   paymentTime: string;
   updatedAt: string;
   receiver: {
+    bankBin: string;
     bankNumber: string;
     bankName: string;
     bankUsername: string;

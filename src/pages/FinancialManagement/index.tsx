@@ -81,7 +81,7 @@ export default function FinancialManagement() {
       id: "qrCode",
       label: "Link thanh toán",
       render(_, record) {
-        return (
+        return record.receiver ? (
           <IconButton
             onClick={() => {
               dialog.info({
@@ -100,7 +100,7 @@ export default function FinancialManagement() {
           >
             <Link />
           </IconButton>
-        );
+        ) : null;
       },
     },
     {

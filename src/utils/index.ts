@@ -1,6 +1,7 @@
 import env from "@/env";
-import { QRPay, BanksObject } from "vietnam-qr-pay";
+import { QRPay } from "vietnam-qr-pay";
 import QRCode from "qrcode";
+import dayjs from "dayjs";
 
 const utils = {
   getImageStrapi: (
@@ -24,15 +25,19 @@ const utils = {
     }).format(amount);
   },
   async generateBankQRCode({
+    bankBin,
     amount,
     purpose,
+    bankNumber,
   }: {
+    bankNumber: string;
+    bankBin: string;
     amount: string;
     purpose: string;
   }) {
     const qrPay = QRPay.initVietQR({
-      bankBin: BanksObject.mbbank.bin,
-      bankNumber: env.VITE_BANK_NUMBER,
+      bankBin: bankBin,
+      bankNumber: bankNumber,
       amount: String(amount),
       purpose: purpose,
     });
@@ -40,6 +45,20 @@ const utils = {
     const content = qrPay.build();
 
     return await QRCode.toDataURL(content);
+  },
+  getDuration(startDate: Date, endDate: Date) {
+    try {
+      const diffInMilliseconds = dayjs(endDate).diff(startDate);
+      const diffDuration = dayjs.duration(diffInMilliseconds);
+      const hours = Math.floor(diffDuration.asHours());
+      const minutes = diffDuration.minutes();
+      const seconds = diffDuration.seconds();
+
+      return `${hours}:${minutes}:${seconds}`;
+    } catch (error) {
+      console.log("🚀 ~ file: index.ts:59 ~ error:", error);
+      return "";
+    }
   },
 };
 

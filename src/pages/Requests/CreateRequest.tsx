@@ -48,6 +48,7 @@ export default function CreateRequest({
       quantity: 1,
       totalPrice: 0,
       note: "",
+      data: undefined,
     },
   });
 
@@ -86,8 +87,10 @@ export default function CreateRequest({
           p.designType?.id === Number(designType)
       );
 
+      setValue("data", price);
       setValue("totalPrice", Number(price?.price) * quantity || 0);
     } else {
+      setValue("data", undefined);
       setValue("totalPrice", 0);
     }
   }, [designType, prices, productType, quantity, setValue]);

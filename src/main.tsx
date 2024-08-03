@@ -12,6 +12,11 @@ import { toasts } from "@/components/commons/Toast.tsx";
 import { DialogProvider } from "@/stores/dialogStore.tsx";
 import useAuthStore from "@/stores/authStore.ts";
 
+import duration from "dayjs/plugin/duration";
+import dayjs from "dayjs";
+
+dayjs.extend(duration);
+
 const queryClient = new QueryClient({
   defaultOptions: {
     mutations: {

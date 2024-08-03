@@ -13,6 +13,7 @@ export interface IRequestFormCreate {
   status?: ERequestStatus;
   note?: string;
   photos?: Array<IFileData | File>;
+  data?: any;
 }
 
 export enum ESortRequest {
@@ -34,13 +35,13 @@ export interface IFindRequestParams {
 
 const requestApi = {
   create: async (data: IRequestFormCreate): Promise<IRequest> => {
-    const uploadPhotos = data?.photos?.map((f: any) => {
-      if (f.url) {
-        return f;
-      } else {
-        return uploadApi.uploadFile(f as File);
-      }
-    });
+    const uploadPhotos = data?.photos
+      ? await Promise.all(
+          data?.photos?.map((f: any) =>
+            f.url ? Promise.resolve(f) : uploadApi.uploadFile(f as File)
+          )
+        )
+      : [];
     console.log("🚀 ~ uploadPhotos ~ uploadPhotos:", uploadPhotos);
     data.photos = uploadPhotos;
     const res = await http.post("/api/requests", { data });

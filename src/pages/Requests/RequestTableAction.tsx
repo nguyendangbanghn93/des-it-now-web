@@ -155,10 +155,16 @@ const ContentDetail = ({
     return () => clearInterval(loop);
   }, []);
 
+  const startDate = data?.logs?.find(
+    (d) => d.status === ERequestStatus.doing
+  )?.updatedAt;
+
+  const endDate = data?.logs?.find((d) => d.status === ERequestStatus.done);
+
   return (
     <div className="w-[500px] p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <div className="font-bold">Yêu cầu: #${data.id}</div>
+        <div className="font-bold">Yêu cầu: #{data.id}</div>
         <IconButton onClick={onClose}>
           <CloseOutlined />
         </IconButton>
@@ -167,17 +173,19 @@ const ContentDetail = ({
       <div className="flex justify-between items-center">
         <div className="font-bold">Mô tả yêu cầu</div>
         <div className="flex gap-4">
-          <Chip
-            size="small"
-            label={
-              <div className="flex gap-2 items-center">
-                <AccessTime fontSize={"small"} />
-                {dayjs(currentTime).format(DateFormat.fullTime)}
-              </div>
-            }
-            variant="filled"
-            color="secondary"
-          />
+          {startDate && !endDate && (
+            <Chip
+              size="small"
+              label={
+                <div className="flex gap-2 items-center text-white">
+                  <AccessTime fontSize={"small"} />
+                  {utils.getDuration(startDate, currentTime.toDate())}
+                </div>
+              }
+              variant="filled"
+              color="secondary"
+            />
+          )}
           <BaseDropdown
             items={itemsChangeStatus[data.status as ERequestStatus]}
           >

@@ -1,10 +1,12 @@
 import utils from "@/utils";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 
 export interface IQrCodeProps {
   amount: number;
   purpose: string;
   receiver: {
+    bankBin: string;
     bankNumber: string;
     bankName: string;
     bankUsername: string;
@@ -15,15 +17,17 @@ export default function QrCode({ amount, purpose, receiver }: IQrCodeProps) {
   const [qrCode, setQrCode] = useState<string>("");
 
   useEffect(() => {
-    if (amount) {
+    if (amount && !_.isEmpty(receiver)) {
       utils
         .generateBankQRCode({
+          bankNumber: receiver.bankNumber,
+          bankBin: receiver.bankBin,
           amount: amount as unknown as string,
           purpose: purpose,
         })
         .then((res) => setQrCode(res as string));
     }
-  }, [amount, purpose]);
+  }, [amount, purpose, receiver]);
 
   return (
     <>
