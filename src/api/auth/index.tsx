@@ -5,6 +5,12 @@ export interface IAuthParams {
   password: string;
 }
 
+export interface IResetPassword {
+  password: string;
+  passwordConfirmation: string;
+  code: string;
+}
+
 const authApi = {
   async register(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
     const res = await http.post("/api/auth/register", {
@@ -16,6 +22,13 @@ const authApi = {
   },
   async login(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
     const res = await http.post("/api/auth/local", data);
+    return res.data;
+  },
+
+  async resetPassword(
+    data: IResetPassword
+  ): Promise<{ jwt: string; user: IUser }> {
+    const res = await http.post("/api/auth/reset-password", data);
     return res.data;
   },
 };

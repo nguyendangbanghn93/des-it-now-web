@@ -5,6 +5,7 @@ import Login from "@/components/Login";
 import Register from "@/components/Register";
 import useAuthStore from "@/stores/authStore";
 import { useEffect } from "react";
+import ForgotPassword from "@/components/ForgotPassword";
 
 export interface IAuthPageProps {}
 
@@ -27,6 +28,7 @@ export default function AuthPage(_props: IAuthPageProps) {
           <img src={LOGO} className="mb-8" />
           <Routes>
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="*" element={<Login />} />
           </Routes>
         </div>
