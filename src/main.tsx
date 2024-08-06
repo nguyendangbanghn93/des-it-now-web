@@ -21,12 +21,12 @@ const queryClient = new QueryClient({
   defaultOptions: {
     mutations: {
       onError(error: any, variables) {
-        console.log(
-          "🚀 ~ onError ~ error, variables, context:",
-          error,
-          variables
+        console.log("🚀 ~ onError ~ error, variables, context:", error);
+        toasts.error(
+          error?.response?.data?.message ||
+            error?.response?.data?.error?.message ||
+            error.message
         );
-        toasts.error(error?.response?.data?.error?.message || error.message);
       },
     },
     queries: {

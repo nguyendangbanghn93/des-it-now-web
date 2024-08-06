@@ -1,14 +1,15 @@
 import create from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-
-
 interface IAuthState {
   token: string | null;
   user?: IUser;
+  refetch?: () => void;
 }
 
 interface IAuthActions {
+  setRefetchUser: (refetch: () => void) => void;
+  refetchUser: () => void;
   setToken: (token: string) => void;
   setUser: (user: IUser) => void;
   logout: () => void;
@@ -23,11 +24,15 @@ const initialState: IAuthState = {
 
 const useAuthStore = create<IAuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
-      setToken: (token) => set({ token }),
-      setUser: (user) => set({ user }),
+      setToken: (token) => set((s) => ({ ...s, token })),
+      setUser: (user) => set((s) => ({ ...s, user })),
       logout: () => set({ ...initialState }),
+      setRefetchUser: (refetch) => set((s) => ({ ...s, refetch })),
+      refetchUser: () => {
+        get().refetch?.();
+      },
     }),
     {
       name: "auth-storage",

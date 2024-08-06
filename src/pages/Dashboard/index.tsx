@@ -15,7 +15,7 @@ export interface IDashboardProps {}
 export default function Dashboard(_props: IDashboardProps) {
   const navigate = useNavigate();
   return (
-    <div className="container mx-auto mt-20">
+    <div className="container mx-auto mt-20 p-4">
       <div className="flex justify-between items-center">
         <div className="text-3xl">Trang tổng quan</div>
         <Button

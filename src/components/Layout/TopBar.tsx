@@ -3,19 +3,22 @@ import { Avatar, Button } from "@mui/material";
 import { LOGO_WHITE } from "@/assets";
 import BaseDropdown from "@/components/bases/BaseDropdown";
 import useAuthStore from "@/stores/authStore";
-import { Logout } from "@mui/icons-material";
+import { Info, Logout } from "@mui/icons-material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import CreateIcon from "@mui/icons-material/Create";
 import HomeIcon from "@mui/icons-material/Home";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import SearchIcon from "@mui/icons-material/Search";
 import TopicIcon from "@mui/icons-material/Topic";
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useNavigate, useNavigation } from "react-router-dom";
+import utils from "@/utils";
 
 export interface ITopBarProps {}
 
 export default function TopBar(_props: ITopBarProps) {
+  const navigate = useNavigate();
   const logout = useAuthStore((s) => s.logout);
+  const user = useAuthStore((s) => s.user);
   const match = useMatch("/:page");
 
   return (
@@ -76,6 +79,13 @@ export default function TopBar(_props: ITopBarProps) {
         <BaseDropdown
           items={[
             {
+              icon: Info,
+              title: "Thông tin cá nhân",
+              onClick: function (): void {
+                navigate("/user/information");
+              },
+            },
+            {
               icon: Logout,
               title: "Đăng xuất",
               onClick: function (): void {
@@ -86,8 +96,10 @@ export default function TopBar(_props: ITopBarProps) {
         >
           <Button>
             <div className="flex text-white items-center gap-4">
-              Nguyễn Đăng Bằng
-              <Avatar>N</Avatar>
+              {user?.fullname || user?.username}
+              <Avatar src={utils.getImageStrapi(user?.avatar as IFileData)}>
+                {(user?.fullname || user?.username)?.substring(0, 1)}
+              </Avatar>
             </div>
           </Button>
         </BaseDropdown>

@@ -41,7 +41,7 @@ export default function Login(_props: ILoginProps) {
       setUser(data?.user);
       setToken(data?.jwt);
     }
-      console.log("🚀 ~ useEffect ~ data:", data)
+    console.log("🚀 ~ useEffect ~ data:", data);
   }, [data, setToken, setUser]);
 
   useEffect(() => {
@@ -88,7 +88,12 @@ export default function Login(_props: ILoginProps) {
           helperText={errors.password ? errors.password.message : ""}
         />
 
-        <Button type="submit" variant="contained" color="error">
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          sx={{ color: "#fff" }}
+        >
           Đăng nhập
         </Button>
 

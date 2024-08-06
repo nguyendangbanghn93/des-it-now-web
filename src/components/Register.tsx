@@ -112,7 +112,12 @@ export default function Register(_props: IRegisterProps) {
           }
         />
 
-        <Button type="submit" variant="contained" color="error">
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          sx={{ color: "#fff" }}
+        >
           Đăng ký
         </Button>
       </form>

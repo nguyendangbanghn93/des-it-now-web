@@ -4,6 +4,8 @@ import useAuthStore from "@/stores/authStore";
 import { useEffect } from "react";
 import { shallow } from "zustand/shallow";
 import http from "@/api/http";
+import { useQuery } from "@tanstack/react-query";
+import userApi from "@/api/user";
 
 export interface IPrivateRouteProps {
   children: React.ReactNode;
@@ -12,7 +14,23 @@ export interface IPrivateRouteProps {
 export default function PrivateRoute({ children }: IPrivateRouteProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [token, user] = useAuthStore((s) => [s.token, s.user], shallow);
+  const [token, user, setUser, setRefetchUser] = useAuthStore(
+    (s) => [s.token, s.user, s.setUser, s.setRefetchUser],
+    shallow
+  );
+
+  const { data, refetch } = useQuery({
+    queryKey: ["userApi.getMe"],
+    queryFn: userApi.getMe,
+  });
+
+  useEffect(() => {
+    setRefetchUser(refetch);
+  }, [refetch, setRefetchUser]);
+
+  useEffect(() => {
+    data && setUser(data);
+  }, [data, setUser]);
 
   useEffect(() => {
     if (!token || !user) {

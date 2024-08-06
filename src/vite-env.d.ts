@@ -26,6 +26,7 @@ interface IMember {
 }
 interface IUser {
   id: number;
+  avatar: IFileData;
   username: string;
   email?: any;
   provider?: any;

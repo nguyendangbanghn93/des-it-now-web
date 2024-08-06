@@ -11,6 +11,12 @@ export interface IResetPassword {
   code: string;
 }
 
+export interface IFormChangePassword {
+  currentPassword: string;
+  password: string;
+  passwordConfirmation: string;
+}
+
 const authApi = {
   async register(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
     const res = await http.post("/api/auth/register", {
@@ -29,6 +35,10 @@ const authApi = {
     data: IResetPassword
   ): Promise<{ jwt: string; user: IUser }> {
     const res = await http.post("/api/auth/reset-password", data);
+    return res.data;
+  },
+  async changePassword(data: IFormChangePassword): Promise<any> {
+    const res = await http.post("/api/auth/change-password", data);
     return res.data;
   },
 };

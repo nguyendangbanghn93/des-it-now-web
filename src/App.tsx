@@ -9,6 +9,7 @@ import Requests from "@/pages/Requests";
 import Toasts from "@/components/commons/Toast";
 import { ConfigProvider } from "@/stores/configStore";
 import FinancialManagement from "@/pages/FinancialManagement";
+import User from "@/pages/User";
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
           element={
             <Layout>
               <PrivateRoute>
+                <Routes>
+                  <Route path="/user/*" element={<User />} />
+                </Routes>
                 <ConfigProvider>
                   <Routes>
                     <Route path="/" element={<Dashboard />} />

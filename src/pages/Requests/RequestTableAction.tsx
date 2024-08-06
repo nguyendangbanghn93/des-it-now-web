@@ -234,7 +234,7 @@ const ContentDetail = ({
                 },
                 {
                   label: "Người thiết kế",
-                  value: "Nguyễn Đăng Bằng",
+                  value: data?.creator?.username,
                 },
                 {
                   label: "Thời gian tạo",
