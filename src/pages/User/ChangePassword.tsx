@@ -58,7 +58,7 @@ export default function ChangePassword(_props: IChangePasswordProps) {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <div className="text-3xl">Tài khoản</div>
+        <div className="text-3xl">Đăng nhập và bảo mật</div>
       </div>
 
       <Card className="mt-4 p-4">
@@ -66,7 +66,7 @@ export default function ChangePassword(_props: IChangePasswordProps) {
           <div className="bg-white w-10 h-10 rounded-full shadow flex justify-center items-center">
             <Password />
           </div>
-          Đăng nhập và bảo mật
+          Đổi mật khẩu
         </div>
 
         <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
@@ -138,7 +138,6 @@ export default function ChangePassword(_props: IChangePasswordProps) {
 
             <div className="flex justify-end gap-4">
               <Button
-                type="submit"
                 variant="contained"
                 color="inherit"
                 onClick={() => reset()}

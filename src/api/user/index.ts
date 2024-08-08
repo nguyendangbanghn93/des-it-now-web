@@ -10,6 +10,10 @@ export interface IFormUpdateUser {
   avatar?: IFileData | File | null;
 }
 
+export interface ICreateUser {
+  email: string;
+}
+
 const userApi = {
   async getMe(): Promise<IUser> {
     const res = await http.get("/api/users/me");
@@ -29,6 +33,11 @@ const userApi = {
     }
 
     const res = await http.put(`/api/users/${id}`, data);
+    return res.data;
+  },
+
+  async create(data: ICreateUser) {
+    const res = await http.post(`/api/users/create`, data);
     return res.data;
   },
 };

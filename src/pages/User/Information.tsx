@@ -190,7 +190,6 @@ export default function Information(_props: IInformationProps) {
 
             <div className="flex justify-end gap-4">
               <Button
-                type="submit"
                 variant="contained"
                 color="inherit"
                 onClick={() => reset()}

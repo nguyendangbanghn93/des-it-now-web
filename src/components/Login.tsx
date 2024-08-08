@@ -98,7 +98,7 @@ export default function Login(_props: ILoginProps) {
         </Button>
 
         <Link
-          to={"https://zalo.me/2388737910481254550"}
+          to={"/auth/forgot-password"}
           className="text-orange-500"
         >
           Quên mật khẩu

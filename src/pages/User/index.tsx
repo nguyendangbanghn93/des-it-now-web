@@ -1,5 +1,7 @@
 import ChangePassword from "@/pages/User/ChangePassword";
 import Information from "@/pages/User/Information";
+import Notification from "@/pages/User/Notification";
+import Team from "@/pages/User/Team";
 import {
   LockOutlined,
   NotificationsNone,
@@ -79,9 +81,9 @@ export default function User(_props: IUserProps) {
         <Grid item xs={9}>
           <Routes>
             <Route path="/information" element={<Information />} />
-            <Route path="/notification" element={<ChangePassword />} />
+            <Route path="/notification" element={<Notification />} />
             <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="/team" element={<Information />} />
+            <Route path="/team" element={<Team />} />
           </Routes>
         </Grid>
       </Grid>
