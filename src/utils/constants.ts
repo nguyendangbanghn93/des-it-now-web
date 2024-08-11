@@ -4,6 +4,7 @@ export enum ERequestStatus {
   review = "review",
   needEdit = "needEdit",
   done = "done",
+  cancel = "cancel",
 }
 
 export enum ETransactionType {
@@ -16,6 +17,16 @@ export enum ETransactionStatus {
   paid = "paid",
   cancel = "cancel",
 }
+
+export enum EPosition {
+  admin = "admin",
+  member = "member",
+}
+
+export const Position: Record<EPosition, string> = {
+  [EPosition.admin]: "Quản trị viên",
+  [EPosition.member]: "Thành viên",
+};
 
 export const TransactionType: Record<ETransactionType, string> = {
   [ETransactionType.deposit]: "Nạp tiền",
@@ -34,6 +45,7 @@ export const RequestStatus: Record<ERequestStatus, string> = {
   [ERequestStatus.review]: "Cần review",
   [ERequestStatus.needEdit]: "Cần sửa",
   [ERequestStatus.done]: "Hoàn thành",
+  [ERequestStatus.cancel]: "Hủy",
 };
 
 export const DateFormat = {

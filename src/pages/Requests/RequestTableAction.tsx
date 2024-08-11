@@ -13,10 +13,20 @@ import {
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { CloseOutlined, AccessTime, EditOutlined } from "@mui/icons-material";
+import {
+  CloseOutlined,
+  AccessTime,
+  EditOutlined,
+  Cancel,
+} from "@mui/icons-material";
 
 import dayjs from "dayjs";
-import { DateFormat, ERequestStatus, RequestStatus } from "@/utils/constants";
+import {
+  DateFormat,
+  EPosition,
+  ERequestStatus,
+  RequestStatus,
+} from "@/utils/constants";
 import utils from "@/utils";
 import BaseDropdown from "@/components/bases/BaseDropdown";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -24,25 +34,32 @@ import RequestStatusComponent from "@/pages/Requests/RequestStatusComponent";
 import { useMutation } from "@tanstack/react-query";
 import requestApi from "@/api/request";
 import { loading } from "@/components/commons/Loading";
+import useAuthStore from "@/stores/authStore";
+import CreateRequest from "@/pages/Requests/CreateRequest";
 
 export interface IRequestTableActionProps {
   data: IRequest;
   refetchTable: () => void;
+  team: ITeam;
 }
 
 export default function RequestTableAction({
   data,
   refetchTable,
+  team,
 }: IRequestTableActionProps) {
   const [open, setOpen] = useState<boolean>(false);
+
   return (
     <div>
       <IconButton onClick={() => setOpen(true)}>
         <VisibilityIcon />
       </IconButton>
+
       {open && (
         <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
           <ContentDetail
+            team={team}
             refetchTable={refetchTable}
             data={data}
             onClose={() => setOpen(false)}
@@ -57,12 +74,18 @@ const ContentDetail = ({
   data,
   onClose,
   refetchTable,
+  team,
 }: {
   data: IRequest;
   onClose: () => any;
   refetchTable: () => void;
+  team: ITeam;
 }) => {
   const [currentTime, setCurrentTime] = useState<dayjs.Dayjs>(dayjs());
+
+  const user = useAuthStore((s) => s.user);
+
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
 
   const mutation = useMutation({
     mutationFn: requestApi.update,
@@ -73,92 +96,133 @@ const ContentDetail = ({
 
   loading(mutation.isPending);
 
-  const itemsChangeStatus: Record<ERequestStatus, any> = useMemo(
-    () => ({
-      [ERequestStatus.todo]: [
-        {
-          icon: AccessTimeIcon,
-          title: RequestStatus[ERequestStatus.doing],
-          onClick() {
-            mutation.mutate({
-              id: data.id,
-              data: { status: ERequestStatus.doing },
-            });
-          },
-        },
-      ],
-      [ERequestStatus.doing]: [
-        {
-          icon: AccessTimeIcon,
-          title: RequestStatus[ERequestStatus.review],
-          onClick() {
-            mutation.mutate({
-              id: data.id,
-              data: { status: ERequestStatus.review },
-            });
-          },
-        },
-      ],
-      [ERequestStatus.review]: [
-        {
-          icon: AccessTimeIcon,
-          title: RequestStatus[ERequestStatus.needEdit],
-          onClick() {
-            mutation.mutate({
-              id: data.id,
-              data: { status: ERequestStatus.needEdit },
-            });
-          },
-        },
-        {
-          icon: AccessTimeIcon,
-          title: RequestStatus[ERequestStatus.done],
-          onClick() {
-            mutation.mutate({
-              id: data.id,
-              data: { status: ERequestStatus.done },
-            });
-          },
-        },
-      ],
-      [ERequestStatus.needEdit]: [
-        {
-          icon: AccessTimeIcon,
-          title: RequestStatus[ERequestStatus.doing],
-          onClick() {
-            mutation.mutate({
-              id: data.id,
-              data: { status: ERequestStatus.doing },
-            });
-          },
-        },
-      ],
-      [ERequestStatus.done]: undefined,
-    }),
-    [data.id, mutation]
+  const isCreator = useMemo(
+    () => user?.id === data?.creator?.id,
+    [data?.creator?.id, user?.id]
+  );
+  const isAssign = useMemo(
+    () => user?.id === data?.assign?.id,
+    [data?.assign?.id, user?.id]
+  );
+  const isAdmin = useMemo(
+    () => user?.team.position === EPosition.admin,
+    [user?.team.position]
   );
 
-  switch (data.status) {
-    case ERequestStatus.todo:
-      itemsChangeStatus;
-      break;
+  const itemsChangeStatus: Record<ERequestStatus, any> = useMemo(
+    () => ({
+      [ERequestStatus.todo]: isAssign
+        ? [
+            {
+              icon: AccessTimeIcon,
+              title: RequestStatus[ERequestStatus.doing],
+              onClick() {
+                mutation.mutate({
+                  id: data.id,
+                  data: { status: ERequestStatus.doing },
+                });
+              },
+            },
+          ]
+        : [],
+      [ERequestStatus.doing]: isAssign
+        ? [
+            {
+              icon: AccessTimeIcon,
+              title: RequestStatus[ERequestStatus.review],
+              onClick() {
+                mutation.mutate({
+                  id: data.id,
+                  data: { status: ERequestStatus.review },
+                });
+              },
+            },
+          ]
+        : [],
+      [ERequestStatus.review]:
+        isCreator || isAdmin
+          ? [
+              {
+                icon: AccessTimeIcon,
+                title: RequestStatus[ERequestStatus.needEdit],
+                onClick() {
+                  mutation.mutate({
+                    id: data.id,
+                    data: { status: ERequestStatus.needEdit },
+                  });
+                },
+              },
+              {
+                icon: AccessTimeIcon,
+                title: RequestStatus[ERequestStatus.done],
+                onClick() {
+                  mutation.mutate({
+                    id: data.id,
+                    data: { status: ERequestStatus.done },
+                  });
+                },
+              },
+            ]
+          : [],
+      [ERequestStatus.needEdit]: isAssign
+        ? [
+            {
+              icon: AccessTimeIcon,
+              title: RequestStatus[ERequestStatus.doing],
+              onClick() {
+                mutation.mutate({
+                  id: data.id,
+                  data: { status: ERequestStatus.doing },
+                });
+              },
+            },
+          ]
+        : [],
+      [ERequestStatus.done]: [],
+      [ERequestStatus.cancel]: [],
+    }),
+    [data.id, isAdmin, isAssign, isCreator, mutation]
+  );
 
-    default:
-      break;
+  if (isAdmin || isCreator) {
+    const cancelItem = {
+      icon: Cancel,
+      title: RequestStatus[ERequestStatus.cancel],
+      onClick() {
+        mutation.mutate({
+          id: data.id,
+          data: { status: ERequestStatus.cancel },
+        });
+      },
+    };
+
+    itemsChangeStatus.todo.push(cancelItem);
+    itemsChangeStatus.doing.push(cancelItem);
+    itemsChangeStatus.needEdit.push(cancelItem);
+    itemsChangeStatus.review.push(cancelItem);
   }
 
+  const startDate = useMemo(
+    () => data?.logs?.find((d) => d.status === ERequestStatus.doing)?.updatedAt,
+    [data?.logs]
+  );
+
+  const endDate = useMemo(
+    () =>
+      data?.logs?.find(
+        (d) => d.status === ERequestStatus.done || ERequestStatus.cancel
+      ),
+    [data?.logs]
+  );
+
   useEffect(() => {
-    const loop = setInterval(() => {
-      setCurrentTime(dayjs());
-    }, 1000);
-    return () => clearInterval(loop);
-  }, []);
-
-  const startDate = data?.logs?.find(
-    (d) => d.status === ERequestStatus.doing
-  )?.updatedAt;
-
-  const endDate = data?.logs?.find((d) => d.status === ERequestStatus.done);
+    if (startDate && !endDate) {
+      const loop = setInterval(() => {
+        setCurrentTime(dayjs());
+      }, 1000);
+      return () => clearInterval(loop);
+    }
+  }, [endDate, startDate]);
 
   return (
     <div className="w-[500px] p-4 flex flex-col gap-4">
@@ -168,6 +232,15 @@ const ContentDetail = ({
           <CloseOutlined />
         </IconButton>
       </div>
+      {openEdit && (
+        <CreateRequest
+          refetchRequest={refetchTable}
+          team={team}
+          open={openEdit}
+          initValue={data}
+          handleClose={() => setOpenEdit(false)}
+        />
+      )}
 
       <div className="flex justify-between items-center">
         <div className="font-bold">Mô tả yêu cầu</div>
@@ -190,17 +263,25 @@ const ContentDetail = ({
           >
             {RequestStatusComponent[data.status as ERequestStatus]}
           </BaseDropdown>
-          <Button
-            sx={{ borderRadius: 8 }}
-            size="small"
-            className="flex gap-2"
-            color="inherit"
-          >
-            <div className="text-sm text-gray-500">
-              <EditOutlined fontSize="small" />
-              Sửa
-            </div>
-          </Button>
+          {(isAdmin || isCreator) &&
+            ![ERequestStatus.done, ERequestStatus.cancel].includes(
+              data.status as ERequestStatus
+            ) && (
+              <Button
+                sx={{ borderRadius: 8 }}
+                size="small"
+                className="flex gap-2"
+                color="inherit"
+              >
+                <div
+                  className="text-sm text-gray-500"
+                  onClick={() => setOpenEdit(true)}
+                >
+                  <EditOutlined fontSize="small" />
+                  Sửa
+                </div>
+              </Button>
+            )}
         </div>
       </div>
 
@@ -234,7 +315,7 @@ const ContentDetail = ({
                 },
                 {
                   label: "Người thiết kế",
-                  value: data?.creator?.username,
+                  value: data?.assign?.username,
                 },
                 {
                   label: "Thời gian tạo",

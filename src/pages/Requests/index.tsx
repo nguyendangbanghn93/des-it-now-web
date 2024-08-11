@@ -26,7 +26,7 @@ import CreateRequest from "@/pages/Requests/CreateRequest";
 import RequestStatusComponent from "@/pages/Requests/RequestStatusComponent";
 import RequestTableAction from "@/pages/Requests/RequestTableAction";
 import utils from "@/utils";
-import { DateFormat, ERequestStatus } from "@/utils/constants";
+import { DateFormat, ERequestStatus, RequestStatus } from "@/utils/constants";
 import { FilterList } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import { useQuery } from "@tanstack/react-query";
@@ -36,6 +36,7 @@ import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { dialog } from "@/stores/dialogStore";
+import { loading } from "@/components/commons/Loading";
 
 interface Column {
   id: "name" | "code" | "population" | "size" | "density" | any;
@@ -110,7 +111,11 @@ export default function Requests(_props: IRequestsProps) {
       id: "action",
       label: "Hành động",
       render: (_, row) => (
-        <RequestTableAction refetchTable={refetchRequest} data={row} />
+        <RequestTableAction
+          team={team as ITeam}
+          refetchTable={refetchRequest}
+          data={row}
+        />
       ),
     },
   ];
@@ -126,7 +131,11 @@ export default function Requests(_props: IRequestsProps) {
     },
   });
 
-  const { data: dataRequests, refetch: refetchRequest } = useQuery({
+  const {
+    data: dataRequests,
+    refetch: refetchRequest,
+    isLoading,
+  } = useQuery({
     queryFn: () => requestApi.find(params),
     queryKey: [
       "requestApi.find",
@@ -136,6 +145,8 @@ export default function Requests(_props: IRequestsProps) {
       params.status,
     ],
   });
+
+  useEffect(() => loading(isLoading), [isLoading]);
 
   const addRequestClick = () => {
     if (!team) {
@@ -161,6 +172,7 @@ export default function Requests(_props: IRequestsProps) {
         refetchRequest={refetchRequest}
         open={openCreateRequest}
         handleClose={() => setOpenCreateRequest(false)}
+        team={team as ITeam}
       />
       <div className="container mx-auto mt-20 p-4 flex flex-col gap-4">
         <div className="flex justify-between items-center">
@@ -185,11 +197,10 @@ export default function Requests(_props: IRequestsProps) {
           >
             {[
               { label: "All", value: "" },
-              { label: "Cần làm", value: "todo" },
-              { label: "Đang làm", value: "doing" },
-              { label: "Đang review", value: "review" },
-              { label: "Cần sửa", value: "needEdit" },
-              { label: "Hoàn thành", value: "done" },
+              ...Object.keys(RequestStatus).map((v) => ({
+                label: RequestStatus[v as ERequestStatus],
+                value: v,
+              })),
             ].map((item) => {
               return (
                 <Tab label={item.label} key={item.value} value={item.value} />

@@ -26,12 +26,16 @@ export interface ICreateRequestProps {
   open?: boolean;
   handleClose?: () => void;
   refetchRequest: () => void;
+  team: ITeam;
+  initValue?: IRequest;
 }
 
 export default function CreateRequest({
   refetchRequest,
   open = false,
   handleClose,
+  team,
+  initValue,
 }: ICreateRequestProps) {
   const {
     control,
@@ -43,35 +47,52 @@ export default function CreateRequest({
     reset,
   } = useForm<IRequestFormCreate>({
     defaultValues: {
-      productType: "",
-      designType: "",
-      quantity: 1,
-      totalPrice: 0,
-      note: "",
-      data: undefined,
+      productType:
+        (initValue?.data?.productType?.id as unknown as string) || "",
+      designType: (initValue?.data?.designType?.id as unknown as string) || "",
+      quantity: initValue?.quantity || 1,
+      totalPrice: initValue?.totalPrice || 0,
+      note: initValue?.note,
+      data: initValue?.data || undefined,
+      assign: initValue?.assign.id || undefined,
+      name: initValue?.name || "",
+      photos: initValue?.photos,
     },
   });
+
+  const isEdit = !!initValue;
 
   const { mutate, isPending } = useMutation({
     mutationFn: requestApi.create,
     onSuccess() {
+      reset();
       toasts.success("Tạo yêu cầu thành công");
       refetchRequest();
       handleClose && handleClose();
     },
   });
 
+  const { mutate: mutateUpdate, isPending: isPendingUpdate } = useMutation({
+    mutationFn: requestApi.update,
+    onSuccess() {
+      reset();
+      toasts.success("Cập nhật yêu cầu thành công");
+      refetchRequest();
+      handleClose && handleClose();
+    },
+  });
+
   useEffect(() => {
-    loading(isPending);
-  }, [isPending]);
+    loading(isPending || isPendingUpdate);
+  }, [isPending, isPendingUpdate]);
 
   const [productTypes, prices] = useConfigStore((s) => [
     s.listProductType,
     s.listPrice,
   ]);
 
-  const productType = watch("productType");
-  const designType = watch("designType");
+  const productType = watch("productType") || initValue?.data?.productType?.id;
+  const designType = watch("designType") || initValue?.data?.designType?.id;
   const quantity = watch("quantity");
 
   useEffect(() => {
@@ -104,7 +125,9 @@ export default function CreateRequest({
   }, []);
 
   const onSubmit = async (data: IRequestFormCreate) => {
-    mutate(data as IRequestFormCreate);
+    isEdit
+      ? mutateUpdate({ id: initValue.id, data: data as IRequestFormCreate })
+      : mutate(data as IRequestFormCreate);
   };
 
   return (
@@ -122,8 +145,54 @@ export default function CreateRequest({
             {/* First Row */}
             <div className="w-[calc(50%-16px)]">
               <FormControl fullWidth error={!!errors.productType}>
+                <label htmlFor="name">Tên yêu cầu</label>
+                <Controller
+                  name="name"
+                  control={control}
+                  rules={{ required: "Trường này là bắt buộc" }}
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      {...field}
+                      error={!!errors.name}
+                      helperText={errors.name?.message}
+                    />
+                  )}
+                />
+                {errors.name && (
+                  <FormHelperText>{errors.name.message}</FormHelperText>
+                )}
+              </FormControl>
+            </div>
+
+            <div className="w-[calc(50%-16px)]">
+              <FormControl fullWidth error={!!errors.productType}>
+                <label htmlFor="productType">Người làm</label>
+                <Controller
+                  name="assign"
+                  control={control}
+                  rules={{ required: "Trường này là bắt buộc" }}
+                  render={({ field }) => (
+                    <Select {...field}>
+                      {team.members.map((p, i) => (
+                        <MenuItem key={i} value={String(p?.user?.id)}>
+                          {p?.user.fullname || p?.user?.username}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {errors.assign && (
+                  <FormHelperText>{errors.assign.message}</FormHelperText>
+                )}
+              </FormControl>
+            </div>
+
+            <div className="w-[calc(50%-16px)]">
+              <FormControl fullWidth error={!!errors.productType}>
                 <label htmlFor="productType">Loại sản phẩm</label>
                 <Controller
+                  disabled={isEdit}
                   name="productType"
                   control={control}
                   rules={{ required: "Trường này là bắt buộc" }}
@@ -154,7 +223,7 @@ export default function CreateRequest({
                 <FormControl fullWidth error={!!errors.designType}>
                   <label htmlFor="design-type-label">Loại thiết kế</label>
                   <Controller
-                    disabled={!designTypes.length}
+                    disabled={isEdit || !designTypes.length}
                     name="designType"
                     control={control}
                     rules={{ required: "Trường này là bắt buộc" }}
@@ -179,6 +248,7 @@ export default function CreateRequest({
             <div className="w-[calc(50%-16px)]">
               <label htmlFor="quantity">Số lượng mẫu</label>
               <TextField
+                disabled={isEdit}
                 type="number"
                 fullWidth
                 {...register("quantity", {
@@ -196,6 +266,7 @@ export default function CreateRequest({
               <TextField
                 type="number"
                 fullWidth
+                disabled
                 {...register("totalPrice", {
                   required: "Trường này là bắt buộc",
                 })}
@@ -205,19 +276,11 @@ export default function CreateRequest({
             </div>
           </div>
           <Stack spacing={3}>
-            {/* <BaseUpload onChange={}/> */}
             <Controller
               name="photos"
               control={control}
               render={({ field }) => {
-                return (
-                  <BaseUpload
-                    {...field}
-                    // onChange={() => {
-                    //   console.log(123);
-                    // }}
-                  />
-                );
+                return <BaseUpload {...field} />;
               }}
             />
 
@@ -262,7 +325,7 @@ export default function CreateRequest({
                 variant="contained"
                 color="secondary"
               >
-                Tạo yêu cầu
+                {isEdit ? "Lưu" : "Tạo yêu cầu"}
               </Button>
             </Stack>
           </Stack>

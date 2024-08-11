@@ -31,7 +31,7 @@ export default function BaseDropdown({ children, items }: IBaseDropdown) {
   return (
     <React.Fragment>
       <span onClick={handleClick}>{children}</span>
-      {items?.length && (
+      {items?.length ? (
         <Menu
           anchorEl={anchorEl}
           open={open}
@@ -85,6 +85,8 @@ export default function BaseDropdown({ children, items }: IBaseDropdown) {
             );
           })}
         </Menu>
+      ) : (
+        ""
       )}
     </React.Fragment>
   );

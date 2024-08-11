@@ -10,7 +10,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import SearchIcon from "@mui/icons-material/Search";
 import TopicIcon from "@mui/icons-material/Topic";
-import { Link, useMatch, useNavigate, useNavigation } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import utils from "@/utils";
 
 export interface ITopBarProps {}

@@ -11,17 +11,13 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
-interface ITeam {
-  id: number;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  members: IMember[];
+enum EPosition {
+  admin = "admin",
+  member = "member",
 }
+
 interface IMember {
-  id: number;
-  role: string;
+  position: EPosition;
   user: IUser;
 }
 interface IUser {
@@ -30,9 +26,6 @@ interface IUser {
   username: string;
   email?: any;
   provider?: any;
-  password: string;
-  resetPasswordToken?: any;
-  confirmationToken?: any;
   confirmed: boolean;
   blocked: boolean;
   createdAt: string;
@@ -40,6 +33,7 @@ interface IUser {
   fullname?: any;
   description?: any;
   phone?: string;
+  team: { position: EPosition; team: ITeam };
 }
 
 interface IProductType {
@@ -131,11 +125,19 @@ interface IPagination {
   total?: number;
 }
 
+type TRequestStatus =
+  | "todo"
+  | "doing"
+  | "review"
+  | "needEdit"
+  | "done"
+  | "cancel";
+
 interface IRequest {
   quantity: number;
   id: number;
   name?: any;
-  status: string;
+  status: TRequestStatus;
   //   designType: string;
   //   productType: string;
   totalPrice: number;
@@ -150,17 +152,9 @@ interface IRequest {
   data: IPrice;
   logs: {
     updatedAt: Date;
-    status: "todo" | "doing" | "review" | "needEdit" | "done";
+    status: TRequestStatus;
   }[];
 }
-
-// enum ERequestStatus {
-//   todo = "todo",
-//   doing = "doing",
-//   review = "review",
-//   needEdit = "needEdit",
-//   done = "done",
-// }
 
 interface ITeam {
   id: number;
@@ -173,7 +167,7 @@ interface ITeam {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  members: Member[];
+  members: IMember[];
 }
 
 interface ITransaction {

@@ -14,6 +14,8 @@ export interface IRequestFormCreate {
   note?: string;
   photos?: Array<IFileData | File>;
   data?: IPrice;
+  assign?: number;
+  name?: string;
 }
 
 export enum ESortRequest {
@@ -85,6 +87,16 @@ const requestApi = {
     id: number;
     data: IRequestFormCreate;
   }): Promise<IRequest> => {
+    const uploadPhotos = data?.photos
+      ? await Promise.all(
+          data?.photos?.map((f: any) =>
+            f.url ? Promise.resolve(f) : uploadApi.uploadFile(f as File)
+          )
+        )
+      : [];
+    console.log("🚀 ~ uploadPhotos ~ uploadPhotos:", uploadPhotos);
+    data.photos = uploadPhotos;
+
     const res = await http.put(`/api/requests/${id}`, { data });
     return res?.data;
   },

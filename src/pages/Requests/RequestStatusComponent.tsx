@@ -2,6 +2,7 @@ import { ERequestStatus, RequestStatus } from "@/utils/constants";
 import { Chip } from "@mui/material";
 import {
   AccessTime,
+  Cancel,
   CheckCircle,
   List,
   RateReview,
@@ -99,6 +100,25 @@ const RequestStatusComponent = {
         <div className="flex gap-2 items-center cursor-pointer">
           <CheckCircle color="inherit" fontSize={"small"} />
           {RequestStatus[ERequestStatus.done]}
+        </div>
+      }
+      variant="outlined"
+    />
+  ),
+  [ERequestStatus.cancel]: (
+    <Chip
+      className="cursor-pointer"
+      size="small"
+      sx={{
+        border: "none",
+        background: "rgb(124, 124, 124)",
+        color: "#fff",
+        width: 130,
+      }}
+      label={
+        <div className="flex gap-2 items-center cursor-pointer">
+          <Cancel color="inherit" fontSize={"small"} />
+          {RequestStatus[ERequestStatus.cancel]}
         </div>
       }
       variant="outlined"

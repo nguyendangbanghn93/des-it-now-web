@@ -7,15 +7,18 @@ import { IconButton } from "@mui/material";
 const fileTypes = ["JPG", "PNG"];
 
 import DeleteIcon from "@mui/icons-material/Delete";
+import utils from "@/utils";
+import _ from "lodash";
 
 export interface BaseUpload {
-  onChange?: (files: File[]) => void;
+  onChange?: (files: Array<IFileData | File>) => void;
+  value?: IFileData[] | File[];
   [key: string]: any;
 }
 
 const BaseUpload = React.forwardRef(
-  ({ onChange, ...props }: BaseUpload, ref) => {
-    const [files, setFiles] = useState<File[]>([]);
+  ({ onChange, value, ...props }: BaseUpload, ref) => {
+    const [files, setFiles] = useState<Array<IFileData | File>>(value || []);
 
     // const { data: dataUpload, mutate: mutateUpload } = useMutation({
     //   mutationFn: uploadApi.uploadFiles,
@@ -32,7 +35,7 @@ const BaseUpload = React.forwardRef(
       onChange && onChange(files);
     }, [files, onChange]);
 
-    const handleChange = (files: File[]) => {
+    const handleChange = (files: Array<IFileData | File>) => {
       setFiles((s) => [...s, ...Array.from(files)]);
       //   mutateUpload(files);
     };
@@ -56,7 +59,11 @@ const BaseUpload = React.forwardRef(
                 </div>
                 <img
                   className="w-20 h-20 rounded-lg mt-4"
-                  src={URL.createObjectURL(f)}
+                  src={
+                    _.get(f, "url")
+                      ? utils.getImageStrapi(f as IFileData)
+                      : URL.createObjectURL(f as File)
+                  }
                 />
               </div>
             );
