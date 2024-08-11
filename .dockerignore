@@ -1,0 +1,35 @@
+# Bỏ qua các thư mục build
+/dist
+/out
+/build
+
+# Bỏ qua node_modules
+/node_modules
+
+# Bỏ qua các tệp cấu hình và môi trường cục bộ
+/.env.local
+/.env.*.local
+
+# Bỏ qua các tệp và thư mục dành cho phát triển
+/.vscode
+/.idea
+/test
+/tests
+/spec
+/specs
+/*.log
+/.DS_Store
+/bin
+
+# Bỏ qua các tệp hệ thống
+/Thumbs.db
+.DS_Store
+.git
+.gitignore
+
+# Bỏ qua các tệp và thư mục không cần thiết khác
+/.cache
+/.nuxt
+/.next
+.yarn
+.pnpm-store

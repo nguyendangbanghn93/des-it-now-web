@@ -1,7 +1,6 @@
 import "./index.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SettingsConsumer, SettingsProvider } from "@/contexts/settings";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import App from "./App.tsx";
@@ -20,7 +19,7 @@ dayjs.extend(duration);
 const queryClient = new QueryClient({
   defaultOptions: {
     mutations: {
-      onError(error: any, variables) {
+      onError(error: any) {
         console.log("🚀 ~ onError ~ error, variables, context:", error);
         toasts.error(
           error?.response?.data?.message ||
@@ -45,40 +44,25 @@ const queryClient = new QueryClient({
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <SettingsProvider>
-    <SettingsConsumer>
-      {() => {
-        //   const theme = createTheme({
-        //     colorPreset: settings.colorPreset,
-        //     contrast: settings.contrast,
-        //     direction: settings.direction,
-        //     paletteMode: settings.paletteMode,
-        //     responsiveFontSizes: settings.responsiveFontSizes,
-        //   });
-        return (
-          <ThemeProvider
-            theme={createTheme({
-              shape: { borderRadius: 8 },
-              palette: {
-                secondary: { main: "#EE7553" },
-                // secondary: { main: "#b0b0b0" },
-              },
-            })}
-          >
-            <BrowserRouter>
-              <CssBaseline />
+  <ThemeProvider
+    theme={createTheme({
+      shape: { borderRadius: 8 },
+      palette: {
+        secondary: { main: "#EE7553" },
+        // secondary: { main: "#b0b0b0" },
+      },
+    })}
+  >
+    <BrowserRouter>
+      <CssBaseline />
 
-              <QueryClientProvider client={queryClient}>
-                <DialogProvider>
-                  <App />
-                </DialogProvider>
-              </QueryClientProvider>
-            </BrowserRouter>
-          </ThemeProvider>
-        );
-      }}
-    </SettingsConsumer>
-  </SettingsProvider>
+      <QueryClientProvider client={queryClient}>
+        <DialogProvider>
+          <App />
+        </DialogProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  </ThemeProvider>
   //   <React.StrictMode>
 
   //     {/* <BrowserRouter>
