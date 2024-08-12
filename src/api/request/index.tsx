@@ -29,7 +29,8 @@ export const sortOptions = [
 ];
 
 export interface IFindRequestParams {
-  pagination: IPagination;
+  page: number;
+  pageSize: number;
   status?: string;
   search?: string;
   sort?: ESortRequest;
@@ -54,8 +55,8 @@ const requestApi = {
   ): Promise<IListResponseDefault<IRequest>> => {
     const queryParams = {
       pagination: {
-        pageSize: params.pagination.pageSize,
-        page: params.pagination.page,
+        pageSize: params.pageSize,
+        page: params.page,
       },
       filters: {
         $or: [

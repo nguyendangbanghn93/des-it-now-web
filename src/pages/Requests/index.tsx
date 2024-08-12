@@ -37,6 +37,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { dialog } from "@/stores/dialogStore";
 import { loading } from "@/components/commons/Loading";
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 interface Column {
   id: "name" | "code" | "population" | "size" | "density" | any;
@@ -49,9 +50,18 @@ interface Column {
 export interface IRequestsProps {}
 
 export default function Requests(_props: IRequestsProps) {
+  const location = useLocation();
+
+  const [queries, setQueries] = useQueryParams<IFindRequestParams>({
+    status: "",
+    page: 1,
+    pageSize: 10,
+    sort: ESortRequest["createdAt:desc"],
+    search: "",
+  });
+
   const [openCreateRequest, setOpenCreateRequest] = useState(false);
 
-  const location = useLocation();
   const state = location.state as { create?: boolean };
 
   useEffect(() => {
@@ -59,15 +69,6 @@ export default function Requests(_props: IRequestsProps) {
       setOpenCreateRequest(true);
     }
   }, [state?.create]);
-
-  const [params, setParams] = useState<IFindRequestParams>({
-    status: "",
-    pagination: {
-      page: 1,
-      pageSize: 10,
-    },
-    sort: ESortRequest["createdAt:desc"],
-  });
 
   const columns: readonly Column[] = [
     {
@@ -83,6 +84,7 @@ export default function Requests(_props: IRequestsProps) {
       },
     },
     { id: "id", label: "Mã yêu cầu" },
+    { id: "name", label: "Tên yêu cầu" },
     {
       id: "createdAt",
       label: "Thời gian tạo",
@@ -124,8 +126,8 @@ export default function Requests(_props: IRequestsProps) {
   });
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      sort: params.sort,
-      search: params.search,
+      sort: queries.sort,
+      search: queries.search,
     },
   });
 
@@ -134,14 +136,8 @@ export default function Requests(_props: IRequestsProps) {
     refetch: refetchRequest,
     isLoading,
   } = useQuery({
-    queryFn: () => requestApi.find(params),
-    queryKey: [
-      "requestApi.find",
-      ...Object.values(params.pagination),
-      params.search,
-      params.sort,
-      params.status,
-    ],
+    queryFn: () => requestApi.find(queries),
+    queryKey: ["requestApi.find", ...Object.values(queries)],
   });
 
   useEffect(() => loading(isLoading), [isLoading]);
@@ -161,7 +157,7 @@ export default function Requests(_props: IRequestsProps) {
   const onSearch: SubmitHandler<{ sort?: ESortRequest; search?: string }> = (
     data
   ) => {
-    setParams((s) => ({ ...s, sort: data.sort, search: data.search }));
+    setQueries((s) => ({ ...s, sort: data.sort, search: data.search }));
   };
 
   return (
@@ -188,9 +184,9 @@ export default function Requests(_props: IRequestsProps) {
         <Card className="p-4">
           <Tabs
             className="border-b"
-            value={params.status}
+            value={queries.status}
             onChange={(_, v) => {
-              setParams((s) => ({ ...s, status: v }));
+              setQueries((s) => ({ ...s, status: v }));
             }}
           >
             {[
@@ -304,19 +300,15 @@ export default function Requests(_props: IRequestsProps) {
                   rowsPerPage={dataRequests?.meta.pagination?.pageSize || 10}
                   page={dataRequests?.meta.pagination.page - 1}
                   onRowsPerPageChange={(e) => {
-                    setParams((s) => ({
+                    setQueries((s) => ({
                       ...s,
-                      pagination: {
-                        ...s.pagination,
-                        pageSize: e.target.value as unknown as number,
-                      },
+                      pageSize: e.target.value as unknown as number,
                     }));
                   }}
                   onPageChange={(_e, page: number) => {
-                    console.log("🚀 ~ file: index.tsx:322 ~ page:", page);
-                    setParams((s) => ({
+                    setQueries((s) => ({
                       ...s,
-                      pagination: { ...s.pagination, page: page + 1 },
+                      page: page + 1,
                     }));
                   }}
                 />

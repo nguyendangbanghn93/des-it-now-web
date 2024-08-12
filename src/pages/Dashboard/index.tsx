@@ -11,11 +11,12 @@ import {
 } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import requestApi, { ESortRequest } from "@/api/request";
-import _, { divide } from "lodash";
+import _ from "lodash";
 import useConfigStore from "@/stores/configStore";
 import React from "react";
 import utils from "@/utils";
 import RequestStatusComponent from "@/pages/Requests/RequestStatusComponent";
+import { ERequestStatus } from "@/utils/constants";
 
 export interface IDashboardProps {}
 
@@ -37,13 +38,12 @@ export default function Dashboard(_props: IDashboardProps) {
   const { data: listNew } = useQuery({
     queryFn: () =>
       requestApi.find({
-        pagination: { page: 0, pageSize: 5 },
+        page: 0,
+        pageSize: 5,
         sort: ESortRequest["createdAt:desc"],
       }),
     queryKey: ["requestApi.listNew"],
   });
-
-  console.log("🚀 ~ file: index.tsx:32 ~ countProductType:", listNew);
 
   return (
     <div className="container mx-auto mt-20 p-4">
@@ -69,7 +69,7 @@ export default function Dashboard(_props: IDashboardProps) {
                 (d, e) => (d += Number(e)),
                 0
               ),
-              to: "",
+              to: `/requests`,
               color: "#E48E3E",
               icon: FormatListBulleted,
             },
@@ -81,21 +81,21 @@ export default function Dashboard(_props: IDashboardProps) {
                   countStatus?.needEdit,
                   countStatus?.review,
                 ]) || 0,
-              to: "",
+              to: `/requests?status=${ERequestStatus.doing}`,
               color: "#009721",
               icon: PlaylistPlay,
             },
             {
               title: "Yêu cầu đã xong",
               count: countStatus?.done || 0,
-              to: "",
+              to: `/requests?status=${ERequestStatus.done}`,
               color: "#4865FF",
               icon: Checklist,
             },
             {
               title: "Yêu cầu đã hủy",
               count: countStatus?.cancel || 0,
-              to: "",
+              to: `/requests?status=${ERequestStatus.cancel}`,
               color: "",
               icon: PlaylistRemove,
             },

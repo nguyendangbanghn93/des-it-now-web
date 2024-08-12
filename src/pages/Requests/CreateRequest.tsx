@@ -1,4 +1,6 @@
 import requestApi, { IRequestFormCreate } from "@/api/request";
+import BaseSelect from "@/components/bases/BaseSelect";
+import BaseTextField from "@/components/bases/BaseTextField";
 // import uploadApi from "@/api/upload";
 import BaseUpload from "@/components/bases/BaseUpload";
 import { loading } from "@/components/commons/Loading";
@@ -142,16 +144,21 @@ export default function CreateRequest({
       <Card className="bg-white w-[800px] p-8">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-wrap gap-4">
-            {/* First Row */}
             <div className="w-[calc(50%-16px)]">
               <FormControl fullWidth error={!!errors.productType}>
                 <label htmlFor="name">Tên yêu cầu</label>
                 <Controller
                   name="name"
                   control={control}
-                  rules={{ required: "Trường này là bắt buộc" }}
+                  rules={{
+                    required: "Trường này là bắt buộc",
+                    maxLength: {
+                      value: 50,
+                      message: "Tên không được dài quá 50 ký tự",
+                    },
+                  }}
                   render={({ field }) => (
-                    <TextField
+                    <BaseTextField
                       fullWidth
                       {...field}
                       error={!!errors.name}
@@ -159,9 +166,6 @@ export default function CreateRequest({
                     />
                   )}
                 />
-                {errors.name && (
-                  <FormHelperText>{errors.name.message}</FormHelperText>
-                )}
               </FormControl>
             </div>
 
@@ -173,13 +177,13 @@ export default function CreateRequest({
                   control={control}
                   rules={{ required: "Trường này là bắt buộc" }}
                   render={({ field }) => (
-                    <Select {...field}>
+                    <BaseSelect {...field}>
                       {team.members.map((p, i) => (
                         <MenuItem key={i} value={String(p?.user?.id)}>
                           {p?.user.fullname || p?.user?.username}
                         </MenuItem>
                       ))}
-                    </Select>
+                    </BaseSelect>
                   )}
                 />
                 {errors.assign && (
@@ -197,13 +201,13 @@ export default function CreateRequest({
                   control={control}
                   rules={{ required: "Trường này là bắt buộc" }}
                   render={({ field }) => (
-                    <Select {...field}>
+                    <BaseSelect {...field}>
                       {productTypes.map((p, i) => (
                         <MenuItem key={i} value={String(p.id)}>
                           {p.name}
                         </MenuItem>
                       ))}
-                    </Select>
+                    </BaseSelect>
                   )}
                 />
                 {errors.productType && (
@@ -228,13 +232,13 @@ export default function CreateRequest({
                     control={control}
                     rules={{ required: "Trường này là bắt buộc" }}
                     render={({ field }) => (
-                      <Select {...field} labelId="design-type-label">
+                      <BaseSelect {...field} labelId="design-type-label">
                         {designTypes?.map((d, i) => (
                           <MenuItem key={i} value={String(d.id)}>
                             {d.name}
                           </MenuItem>
                         ))}
-                      </Select>
+                      </BaseSelect>
                     )}
                   />
                   {errors.designType && (
@@ -244,10 +248,9 @@ export default function CreateRequest({
               </Tooltip>
             </div>
 
-            {/* Second Row */}
             <div className="w-[calc(50%-16px)]">
               <label htmlFor="quantity">Số lượng mẫu</label>
-              <TextField
+              <BaseTextField
                 disabled={isEdit}
                 type="number"
                 fullWidth
@@ -263,7 +266,7 @@ export default function CreateRequest({
 
             <div className="w-[calc(50%-16px)]">
               <label htmlFor="totalPrice">Giá thiết kế</label>
-              <TextField
+              <BaseTextField
                 type="number"
                 fullWidth
                 disabled
@@ -289,10 +292,16 @@ export default function CreateRequest({
               <label>Ghí chú</label>
               <Controller
                 control={control}
+                rules={{
+                  maxLength: {
+                    value: 1000,
+                    message: "Tên không được dài quá 1000 ký tự",
+                  },
+                }}
                 name="note"
                 render={({ field }) => {
                   return (
-                    <TextField
+                    <BaseTextField
                       error={!!errors.note}
                       multiline
                       rows={4}
