@@ -23,18 +23,23 @@ function App() {
               <PrivateRoute>
                 <Routes>
                   <Route path="/user/*" element={<User />} />
+                  <Route
+                    path="*"
+                    element={
+                      <ConfigProvider>
+                        <Routes>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/requests" element={<Requests />} />
+                          <Route path="/information" element={<Dashboard />} />
+                          <Route
+                            path="/financial"
+                            element={<FinancialManagement />}
+                          />
+                        </Routes>
+                      </ConfigProvider>
+                    }
+                  />
                 </Routes>
-                <ConfigProvider>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/requests" element={<Requests />} />
-                    <Route path="/information" element={<Dashboard />} />
-                    <Route
-                      path="/financial"
-                      element={<FinancialManagement />}
-                    />
-                  </Routes>
-                </ConfigProvider>
               </PrivateRoute>
             </Layout>
           }

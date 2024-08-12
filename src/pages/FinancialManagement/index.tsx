@@ -49,7 +49,7 @@ export default function FinancialManagement() {
     sort: ESortTransaction["createdAt:desc"],
   });
 
-  const { data: dataRequests, refetch } = useQuery({
+  const { data: dataTransactions, refetch } = useQuery({
     queryFn: () => transactionApi.find(params),
     queryKey: [
       "transactionApi.find",
@@ -62,8 +62,6 @@ export default function FinancialManagement() {
     queryFn: teamApi.getMyTeam,
     queryKey: ["teamApi.getMyTeam"],
   });
-
-  console.log(team);
 
   const columns: readonly Column[] = [
     {
@@ -238,7 +236,7 @@ export default function FinancialManagement() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {dataRequests?.data?.map(
+                    {dataTransactions?.data?.map(
                       (row: ITransaction, ind: number) => {
                         return (
                           <TableRow
@@ -271,7 +269,7 @@ export default function FinancialManagement() {
                   </TableBody>
                 </Table>
               </TableContainer>
-              {dataRequests?.meta.pagination && (
+              {dataTransactions?.meta.pagination && (
                 <TablePagination
                   rowsPerPageOptions={[
                     { label: "10", value: 10 },
@@ -279,9 +277,11 @@ export default function FinancialManagement() {
                     { label: "25", value: 25 },
                   ]}
                   component="div"
-                  count={dataRequests?.meta.pagination.pageCount}
-                  rowsPerPage={dataRequests?.meta.pagination?.pageSize || 10}
-                  page={dataRequests?.meta.pagination.page - 1}
+                  count={dataTransactions?.meta.pagination.total}
+                  rowsPerPage={
+                    dataTransactions?.meta.pagination?.pageSize || 10
+                  }
+                  page={dataTransactions?.meta.pagination.page - 1}
                   onRowsPerPageChange={(e) => {
                     setParams((s) => ({
                       ...s,
@@ -294,7 +294,7 @@ export default function FinancialManagement() {
                   onPageChange={(_e, page: number) => {
                     setParams((s) => ({
                       ...s,
-                      pagination: { ...s.pagination, page: page },
+                      pagination: { ...s.pagination, page: page + 1 },
                     }));
                   }}
                 />

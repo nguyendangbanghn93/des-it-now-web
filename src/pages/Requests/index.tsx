@@ -75,12 +75,10 @@ export default function Requests(_props: IRequestsProps) {
       label: "Ảnh",
       render(val) {
         return (
-          val && (
-            <img
-              className="w-20 h-20 rounded-lg"
-              src={utils.getImageStrapi(val[0])}
-            />
-          )
+          <img
+            className="w-20 h-20 rounded-lg object-cover"
+            src={utils.getImageStrapi(val?.[0])}
+          />
         );
       },
     },
@@ -302,7 +300,7 @@ export default function Requests(_props: IRequestsProps) {
                     { label: "25", value: 25 },
                   ]}
                   component="div"
-                  count={dataRequests?.meta.pagination.pageCount}
+                  count={dataRequests?.meta?.pagination?.total}
                   rowsPerPage={dataRequests?.meta.pagination?.pageSize || 10}
                   page={dataRequests?.meta.pagination.page - 1}
                   onRowsPerPageChange={(e) => {
@@ -315,9 +313,10 @@ export default function Requests(_props: IRequestsProps) {
                     }));
                   }}
                   onPageChange={(_e, page: number) => {
+                    console.log("🚀 ~ file: index.tsx:322 ~ page:", page);
                     setParams((s) => ({
                       ...s,
-                      pagination: { ...s.pagination, page: page },
+                      pagination: { ...s.pagination, page: page + 1 },
                     }));
                   }}
                 />

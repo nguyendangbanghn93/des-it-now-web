@@ -44,7 +44,6 @@ const requestApi = {
           )
         )
       : [];
-    console.log("🚀 ~ uploadPhotos ~ uploadPhotos:", uploadPhotos);
     data.photos = uploadPhotos;
     const res = await http.post("/api/requests", { data });
     return res?.data;
@@ -99,6 +98,22 @@ const requestApi = {
 
     const res = await http.put(`/api/requests/${id}`, { data });
     return res?.data;
+  },
+
+  countStatus: async (): Promise<Record<ERequestStatus, number>> => {
+    const res = await http.get(`/api/requests/count-status`);
+    return res?.data?.reduce((d: any, e: any) => {
+      d[e.status] = Number(e.count);
+      return d;
+    }, {});
+  },
+
+  countProductType: async (): Promise<Record<number, number>> => {
+    const res = await http.get(`/api/requests/count-productType`);
+    return res?.data?.reduce((d: any, e: any) => {
+      d[e.id] = Number(e.count);
+      return d;
+    }, {});
   },
 };
 

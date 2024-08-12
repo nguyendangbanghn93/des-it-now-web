@@ -18,6 +18,9 @@ import {
   AccessTime,
   EditOutlined,
   Cancel,
+  Reviews,
+  RateReview,
+  CheckCircle,
 } from "@mui/icons-material";
 
 import dayjs from "dayjs";
@@ -109,79 +112,75 @@ const ContentDetail = ({
     [user?.team.position]
   );
 
+  const selectItemStatus = useMemo(
+    () => ({
+      doing: {
+        icon: AccessTimeIcon,
+        title: RequestStatus[ERequestStatus.doing],
+        onClick() {
+          mutation.mutate({
+            id: data.id,
+            data: { status: ERequestStatus.doing },
+          });
+        },
+      },
+      review: {
+        icon: Reviews,
+        title: RequestStatus[ERequestStatus.review],
+        onClick() {
+          mutation.mutate({
+            id: data.id,
+            data: { status: ERequestStatus.review },
+          });
+        },
+      },
+      needEdit: {
+        icon: RateReview,
+        title: RequestStatus[ERequestStatus.needEdit],
+        onClick() {
+          mutation.mutate({
+            id: data.id,
+            data: { status: ERequestStatus.needEdit },
+          });
+        },
+      },
+      done: {
+        icon: CheckCircle,
+        title: RequestStatus[ERequestStatus.done],
+        onClick() {
+          mutation.mutate({
+            id: data.id,
+            data: { status: ERequestStatus.done },
+          });
+        },
+      },
+      cancel: {
+        icon: Cancel,
+        title: RequestStatus[ERequestStatus.cancel],
+        onClick() {
+          mutation.mutate({
+            id: data.id,
+            data: { status: ERequestStatus.cancel },
+          });
+        },
+      },
+    }),
+    [data.id, mutation]
+  );
+
   const itemsChangeStatus: Record<ERequestStatus, any> = useMemo(
     () => ({
-      [ERequestStatus.todo]: isAssign
-        ? [
-            {
-              icon: AccessTimeIcon,
-              title: RequestStatus[ERequestStatus.doing],
-              onClick() {
-                mutation.mutate({
-                  id: data.id,
-                  data: { status: ERequestStatus.doing },
-                });
-              },
-            },
-          ]
-        : [],
-      [ERequestStatus.doing]: isAssign
-        ? [
-            {
-              icon: AccessTimeIcon,
-              title: RequestStatus[ERequestStatus.review],
-              onClick() {
-                mutation.mutate({
-                  id: data.id,
-                  data: { status: ERequestStatus.review },
-                });
-              },
-            },
-          ]
-        : [],
+      [ERequestStatus.todo]: isAssign ? [selectItemStatus.doing] : [],
+      [ERequestStatus.doing]: isAssign ? [selectItemStatus.review] : [],
       [ERequestStatus.review]:
         isCreator || isAdmin
-          ? [
-              {
-                icon: AccessTimeIcon,
-                title: RequestStatus[ERequestStatus.needEdit],
-                onClick() {
-                  mutation.mutate({
-                    id: data.id,
-                    data: { status: ERequestStatus.needEdit },
-                  });
-                },
-              },
-              {
-                icon: AccessTimeIcon,
-                title: RequestStatus[ERequestStatus.done],
-                onClick() {
-                  mutation.mutate({
-                    id: data.id,
-                    data: { status: ERequestStatus.done },
-                  });
-                },
-              },
-            ]
+          ? [selectItemStatus.needEdit, selectItemStatus.done]
           : [],
-      [ERequestStatus.needEdit]: isAssign
-        ? [
-            {
-              icon: AccessTimeIcon,
-              title: RequestStatus[ERequestStatus.doing],
-              onClick() {
-                mutation.mutate({
-                  id: data.id,
-                  data: { status: ERequestStatus.doing },
-                });
-              },
-            },
-          ]
-        : [],
+      [ERequestStatus.needEdit]: isAssign ? [selectItemStatus.doing] : [],
       [ERequestStatus.done]: [],
       [ERequestStatus.cancel]: [],
     }),
-    [data.id, isAdmin, isAssign, isCreator, mutation]
+    [isAdmin, isAssign, isCreator, selectItemStatus]
   );
 
   if (isAdmin || isCreator) {
@@ -209,8 +208,10 @@ const ContentDetail = ({
 
   const endDate = useMemo(
     () =>
-      data?.logs?.find(
-        (d) => d.status === ERequestStatus.done || ERequestStatus.cancel
+      data?.logs?.find((d) =>
+        [ERequestStatus.done, ERequestStatus.cancel].includes(
+          d.status as ERequestStatus
+        )
       ),
     [data?.logs]
   );

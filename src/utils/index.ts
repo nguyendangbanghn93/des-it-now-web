@@ -2,6 +2,7 @@ import env from "@/env";
 import { QRPay } from "vietnam-qr-pay";
 import QRCode from "qrcode";
 import dayjs from "dayjs";
+import { IMG_DEFAULT } from "@/assets";
 
 const utils = {
   getImageStrapi: (
@@ -16,7 +17,7 @@ const utils = {
   ) => {
     const objImg = image?.formats?.[size] || image?.formats?.["small"];
     const url = `${env.VITE_API_URL}${objImg?.url}` || urlDefault;
-    return url;
+    return objImg?.url ? url : IMG_DEFAULT;
   },
   formatMoney: (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {

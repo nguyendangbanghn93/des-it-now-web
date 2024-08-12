@@ -97,7 +97,13 @@ export default function TopBar(_props: ITopBarProps) {
           <Button>
             <div className="flex text-white items-center gap-4">
               {user?.fullname || user?.username}
-              <Avatar src={utils.getImageStrapi(user?.avatar as IFileData)}>
+              <Avatar
+                src={
+                  user?.avatar
+                    ? utils.getImageStrapi(user?.avatar as IFileData)
+                    : undefined
+                }
+              >
                 {(user?.fullname || user?.username)?.substring(0, 1)}
               </Avatar>
             </div>
