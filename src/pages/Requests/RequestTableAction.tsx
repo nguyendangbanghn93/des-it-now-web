@@ -39,6 +39,7 @@ import requestApi from "@/api/request";
 import { loading } from "@/components/commons/Loading";
 import useAuthStore from "@/stores/authStore";
 import CreateRequest from "@/pages/Requests/CreateRequest";
+import { toasts } from "@/components/commons/Toast";
 
 export interface IRequestTableActionProps {
   data: IRequest;
@@ -380,7 +381,14 @@ const ContentDetail = ({
       </div>
 
       <div className="text-right mt-8">
-        <Button variant="contained" color="secondary" sx={{ color: "white" }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ color: "white" }}
+          onClick={() => {
+            toasts.info("Coming soon");
+          }}
+        >
           Phản hồi
         </Button>
       </div>
