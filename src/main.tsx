@@ -7,7 +7,7 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
 import ReactDOM from "react-dom/client";
-import { toasts } from "@/components/commons/Toast.tsx";
+import Toasts, { toasts } from "@/components/commons/Toast.tsx";
 import { DialogProvider } from "@/stores/dialogStore.tsx";
 import useAuthStore from "@/stores/authStore.ts";
 
@@ -49,13 +49,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       shape: { borderRadius: 8 },
       palette: {
         secondary: { main: "#EE7553" },
-        // secondary: { main: "#b0b0b0" },
       },
     })}
   >
+    <Toasts />
     <BrowserRouter>
       <CssBaseline />
-
       <QueryClientProvider client={queryClient}>
         <DialogProvider>
           <App />

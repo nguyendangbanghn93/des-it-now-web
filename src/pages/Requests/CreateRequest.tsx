@@ -176,11 +176,15 @@ export default function CreateRequest({
                   rules={{ required: "Trường này là bắt buộc" }}
                   render={({ field }) => (
                     <BaseSelect {...field}>
-                      {team.members.map((p, i) => (
-                        <MenuItem key={i} value={String(p?.user?.id)}>
-                          {p?.user.fullname || p?.user?.username}
-                        </MenuItem>
-                      ))}
+                      {team ? (
+                        team?.members?.map((p, i) => (
+                          <MenuItem key={i} value={String(p?.user?.id)}>
+                            {p?.user.fullname || p?.user?.username}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <></>
+                      )}
                     </BaseSelect>
                   )}
                 />
@@ -200,11 +204,15 @@ export default function CreateRequest({
                   rules={{ required: "Trường này là bắt buộc" }}
                   render={({ field }) => (
                     <BaseSelect {...field}>
-                      {productTypes.map((p, i) => (
-                        <MenuItem key={i} value={String(p.id)}>
-                          {p.name}
-                        </MenuItem>
-                      ))}
+                      {productTypes ? (
+                        productTypes.map((p, i) => (
+                          <MenuItem key={i} value={String(p.id)}>
+                            {p.name}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <></>
+                      )}
                     </BaseSelect>
                   )}
                 />

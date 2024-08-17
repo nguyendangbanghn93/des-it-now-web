@@ -17,6 +17,10 @@ export interface IFormChangePassword {
   passwordConfirmation: string;
 }
 
+export interface IForgotPassword {
+  email: string;
+}
+
 const authApi = {
   async register(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
     const res = await http.post("/api/auth/register", {
@@ -28,6 +32,11 @@ const authApi = {
   },
   async login(data: IAuthParams): Promise<{ jwt: string; user: IUser }> {
     const res = await http.post("/api/auth/local", data);
+    return res.data;
+  },
+
+  async forgotPassword(data: IForgotPassword): Promise<any> {
+    const res = await http.post("/api/auth/forgot-password", data);
     return res.data;
   },
 

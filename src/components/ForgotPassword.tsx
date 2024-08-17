@@ -1,64 +1,43 @@
-import authApi, { IResetPassword } from "@/api/auth";
+import authApi, { IForgotPassword } from "@/api/auth";
 import BaseTextField from "@/components/bases/BaseTextField";
 import { loading } from "@/components/commons/Loading";
 import { toasts } from "@/components/commons/Toast";
-import useAuthStore from "@/stores/authStore";
 import { Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import QueryString from "qs";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link, useLocation } from "react-router-dom";
-import { shallow } from "zustand/shallow";
+import { Link } from "react-router-dom";
 
 export interface IForgotPasswordProps {}
 
 export default function ForgotPassword() {
-  const location = useLocation();
-  const queries = QueryString.parse(location.search.replace("?", ""));
-  const [setToken, setUser] = useAuthStore(
-    (s) => [s.setToken, s.setUser],
-    shallow
-  );
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setError,
-  } = useForm<IResetPassword>();
+  } = useForm<IForgotPassword>();
 
   const { data, mutate, isPending } = useMutation({
-    mutationFn: authApi.resetPassword,
+    mutationFn: authApi.forgotPassword,
   });
 
   useEffect(() => {
     if (data) {
-      toasts.success("Đổi mật khẩu thành công");
-      setUser(data?.user);
-      setToken(data?.jwt);
+      toasts.success("Vui lòng kiểm tra email để đặt lại mật khẩu.");
     }
-  }, [data, setToken, setUser]);
+  }, [data]);
 
   useEffect(() => {
     loading(isPending);
   }, [isPending]);
 
-  const onSubmit: SubmitHandler<IResetPassword> = ({
-    password,
-    passwordConfirmation,
-  }: any) => {
-    if (password === passwordConfirmation) {
-      mutate({ password, passwordConfirmation, code: queries.code as string });
-    } else {
-      setError("passwordConfirmation", {
-        message: "Nhắc lại mật khẩu không đúng",
-      });
-    }
+  const onSubmit: SubmitHandler<IForgotPassword> = ({ email }: any) => {
+    mutate({ email });
   };
 
   return (
     <>
-      <div className="font-bold text-2xl mb-4">Đặt lại mật khẩu</div>
+      <div className="font-bold text-2xl mb-4">Quên mật khẩu</div>
       <Link to={"/auth/login"} className="text-orange-600">
         Đăng nhập ngay
       </Link>
@@ -68,32 +47,21 @@ export default function ForgotPassword() {
         onSubmit={handleSubmit(onSubmit)}
       >
         <BaseTextField
-          type="password"
-          label="Mật khẩu"
+          type="email"
+          label="Email"
           required
           autoFocus
-          {...register("password", { required: "Password là bắt buộc" })}
-          error={!!errors.password}
-          helperText={errors.password ? errors.password.message : ""}
+          {...register("email", { required: "Email là bắt buộc" })}
+          error={!!errors.email}
+          helperText={errors.email ? errors.email.message : ""}
         />
 
-        <BaseTextField
-          type="password"
-          label="Nhập lại mật khẩu"
-          required
-          autoFocus
-          {...register("passwordConfirmation", {
-            required: "Nhập lại mật khẩu là bắt buộc",
-          })}
-          error={!!errors.passwordConfirmation}
-          helperText={
-            errors.passwordConfirmation
-              ? errors.passwordConfirmation.message
-              : ""
-          }
-        />
-
-        <Button type="submit" variant="contained" color="error">
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          sx={{ color: "white" }}
+        >
           Gửi
         </Button>
       </form>

@@ -39,7 +39,6 @@ export default function Register(_props: IRegisterProps) {
 
   useEffect(() => {
     if (data) {
-      console.log("🚀 ~ useEffect ~ data:", data);
       toasts.success("Đăng ký thành công");
       setUser(data.user);
       setToken(data.jwt);
@@ -78,11 +77,11 @@ export default function Register(_props: IRegisterProps) {
         onSubmit={handleSubmit(onSubmit)}
       >
         <BaseTextField
-          label="Email/email"
+          label="Email"
           required
           autoFocus
           {...register("email", {
-            required: "Email/email là bắt buộc",
+            required: "Email là bắt buộc",
             validate: (value: string) => validator.email(value) || true,
           })}
           error={!!errors.email}

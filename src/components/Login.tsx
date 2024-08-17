@@ -41,7 +41,6 @@ export default function Login(_props: ILoginProps) {
       setUser(data?.user);
       setToken(data?.jwt);
     }
-    console.log("🚀 ~ useEffect ~ data:", data);
   }, [data, setToken, setUser]);
 
   useEffect(() => {
@@ -97,10 +96,7 @@ export default function Login(_props: ILoginProps) {
           Đăng nhập
         </Button>
 
-        <Link
-          to={"/auth/forgot-password"}
-          className="text-orange-500"
-        >
+        <Link to={"/auth/forgot-password"} className="text-orange-500">
           Quên mật khẩu
         </Link>
       </form>

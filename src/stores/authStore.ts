@@ -28,7 +28,10 @@ const useAuthStore = create<IAuthStore>()(
       ...initialState,
       setToken: (token) => set((s) => ({ ...s, token })),
       setUser: (user) => set((s) => ({ ...s, user })),
-      logout: () => set({ ...initialState }),
+      logout: () => {
+        set({ ...initialState });
+        window.location.reload();
+      },
       setRefetchUser: (refetch) => set((s) => ({ ...s, refetch })),
       refetchUser: () => {
         get().refetch?.();

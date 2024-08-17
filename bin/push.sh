@@ -5,7 +5,7 @@ set -e  # Dừng script nếu có lệnh nào đó bị lỗi
 echo "Step 1: Đang tải biến môi trường từ file .env..."
 export $(grep -v '^#' .env | xargs)
 
-DOCKER_IMAGE_NAME="desitnow-be"
+DOCKER_IMAGE_NAME="desitnow-fe"
 DOCKER_TAG="latest"
 TAR_FILE="$DOCKER_IMAGE_NAME-$DOCKER_TAG.tar"
 

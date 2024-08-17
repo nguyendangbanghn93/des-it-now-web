@@ -20,8 +20,8 @@ export default function PrivateRoute({ children }: IPrivateRouteProps) {
   );
 
   const { data, refetch } = useQuery({
-    queryKey: ["userApi.getMe"],
-    queryFn: userApi.getMe,
+    queryKey: ["userApi.getMe", token],
+    queryFn: () => userApi.getMe(token),
   });
 
   useEffect(() => {

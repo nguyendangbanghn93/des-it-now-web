@@ -15,7 +15,8 @@ export interface ICreateUser {
 }
 
 const userApi = {
-  async getMe(): Promise<IUser> {
+  async getMe(token: string | null): Promise<IUser | null> {
+    if (!token) return null;
     const res = await http.get("/api/users/me");
     return res.data;
   },
