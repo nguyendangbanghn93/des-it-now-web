@@ -26,6 +26,7 @@
     "react-hook-form": "^7.52.1",
     "react-number-format": "^5.4.0",
     "react-router-dom": "^6.26.0",
+    "serviceworker-webpack-plugin": "^1.0.1",
     "uuid": "^10.0.0",
     "vietnam-qr-pay": "^1.4.0",
     "yup": "^1.4.0",

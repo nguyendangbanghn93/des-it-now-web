@@ -61,6 +61,14 @@ const utils = {
       return "";
     }
   },
+  async subscribeUser() {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: env.VITE_VAPID_PUBLIC_KEY,
+    });
+    return subscription;
+  },
 };
 
 export default utils;

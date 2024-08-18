@@ -39,11 +39,11 @@ export default function Information(_props: IInformationProps) {
     });
   const defaultValues = useMemo(
     () => ({
-      fullname: user?.fullname || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      description: user?.description || "",
-      avatar: user?.avatar || undefined,
+      fullname: user?.fullname,
+      email: user?.email,
+      phone: user?.phone,
+      description: user?.description,
+      avatar: user?.avatar,
     }),
     [user]
   );
@@ -61,7 +61,7 @@ export default function Information(_props: IInformationProps) {
     : "";
 
   const { mutate, isPending } = useMutation({
-    mutationFn: userApi.update,
+    mutationFn: userApi.updateMe,
     onSuccess() {
       toasts.success("Cập nhật thông tin user thành công");
       setIsChange(false);
@@ -74,7 +74,7 @@ export default function Information(_props: IInformationProps) {
   }, [isPending]);
 
   const onSubmit = (data: IFormUpdateUser) => {
-    mutate({ id: user?.id as number, data });
+    mutate(data);
   };
 
   return (

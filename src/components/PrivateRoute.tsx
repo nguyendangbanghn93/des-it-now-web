@@ -24,6 +24,11 @@ export default function PrivateRoute({ children }: IPrivateRouteProps) {
     queryFn: () => userApi.getMe(token),
   });
 
+  useQuery({
+    queryKey: ["userApi.addSubscription"],
+    queryFn: () => userApi.addSubscription(token),
+  });
+
   useEffect(() => {
     setRefetchUser(refetch);
   }, [refetch, setRefetchUser]);

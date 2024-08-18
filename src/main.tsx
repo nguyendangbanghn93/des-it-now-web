@@ -43,6 +43,37 @@ const queryClient = new QueryClient({
   },
 });
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .getRegistrations()
+    .then(function (registrations) {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    })
+    .finally(() => {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(function (registration) {
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
+        })
+        .catch(function (error) {
+          console.error("Service Worker registration failed:", error);
+        });
+    });
+}
+
+Notification.requestPermission().then((permission) => {
+  if (permission === "granted") {
+    console.log("Notification permission granted.");
+  } else {
+    console.log("Notification permission denied.");
+  }
+});
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ThemeProvider
     theme={createTheme({

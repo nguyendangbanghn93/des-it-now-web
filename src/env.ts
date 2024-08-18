@@ -4,6 +4,7 @@ const env = {
   VITE_BANK_NAME: import.meta.env.VITE_BANK_NAME || "MB Bank",
   VITE_BANK_USER_NAME:
     import.meta.env.VITE_BANK_USER_NAME || "NGUYEN DANG BANG",
+  VITE_VAPID_PUBLIC_KEY: import.meta.env.VITE_VAPID_PUBLIC_KEY,
 };
 
 export default env;

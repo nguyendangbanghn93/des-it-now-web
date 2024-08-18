@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_BANK_NUMBER: string;
   readonly VITE_BANK_NAME: string;
   readonly VITE_BANK_USER_NAME: string;
+  readonly VITE_VAPID_PUBLIC_KEY: string;
 }
 
 interface ImportMeta {
@@ -21,6 +22,7 @@ interface IMember {
   user: IUser;
 }
 interface IUser {
+  subscriptions?: any[];
   id: number;
   avatar: IFileData;
   username: string;

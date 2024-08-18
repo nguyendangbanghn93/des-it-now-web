@@ -1,13 +1,15 @@
 import http from "@/api/http";
 import uploadApi from "@/api/upload";
+import utils from "@/utils";
 import _ from "lodash";
 
 export interface IFormUpdateUser {
-  fullname: string;
-  phone: string;
-  email: string;
-  description: string;
+  fullname?: string;
+  phone?: string;
+  email?: string;
+  description?: string;
   avatar?: IFileData | File | null;
+  subscription?: any;
 }
 
 export interface ICreateUser {
@@ -21,19 +23,20 @@ const userApi = {
     return res.data;
   },
 
-  async update({
-    id,
-    data,
-  }: {
-    id: number;
-    data: IFormUpdateUser;
-  }): Promise<IUser> {
-    if (data.avatar && !_.get(data, "avatar.url")) {
+  async addSubscription(token?: string | null): Promise<any> {
+    if (!token) return null;
+    const subscription = await utils.subscribeUser();
+    const res = await userApi.updateMe({ subscription });
+
+    return res;
+  },
+  async updateMe(data: IFormUpdateUser): Promise<IUser> {
+    if (data?.avatar && !_.get(data, "avatar.url")) {
       const avatar = await uploadApi.uploadFile(data.avatar as File);
       data.avatar = avatar as IFileData;
     }
 
-    const res = await http.put(`/api/users/${id}`, data);
+    const res = await http.put(`/api/users/update-me`, data);
     return res.data;
   },
 
